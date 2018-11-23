@@ -1,9 +1,8 @@
-import { ITos, ILogout, INavigation} from './ReducerType';
+import { ITos, ILogout } from './ReducerType';
 import { ITicker } from '../reducers/ticker';
 import { ILocales } from '../reducers/locales';
 import { IActiveContracts } from '../reducers/activeContracts';
 import { ISocket } from '../reducers/socket';
-import { IPlaceOrderResponse } from '../reducers/placeOrderResponse';
 import { IExecReportResponse } from '../reducers/execReportResponse';
 import { IChartData } from '../reducers/chartData';
 import { IAccountInfoResponse } from '../reducers/accountInfoResponse';
@@ -15,6 +14,7 @@ import { IQueryDealQuoteResponse } from '../reducers/queryDealQuoteResponse';
 import { IExecTrade } from '../reducers/exectrade';
 import { IPlaceOrderInfo } from '../reducers/placeOrderInfo';
 import { IRetrieveTransactionsResponse } from '../reducers/retrieveTransactionsResponse';
+import INavigation from './navigation';
 
 export interface IaLLMapState {
     locales: ILocales;
@@ -23,7 +23,6 @@ export interface IaLLMapState {
     ticker: ITicker;
     tos: ITos;
     terms: ITerms;
-    placeOrderResponse: IPlaceOrderResponse;
     socket: ISocket;
     navigation: INavigation;
     activeContracts: IActiveContracts;
@@ -68,7 +67,6 @@ export interface IheaderProps {
     terms: ITerms;
     ticker: ITicker;
     showTerm: () => void;
-    response?: IPlaceOrderResponse;
     actions?: any;
 }
 

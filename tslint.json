@@ -10,6 +10,6 @@
   "rules": {
     "ordered-imports": false,
     "object-literal-sort-keys": false,
-    "named-imports-order": "any"
+    "named-imports-order": false
   }
 }

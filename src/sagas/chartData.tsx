@@ -1,6 +1,6 @@
 import { takeLatest } from 'redux-saga';
 import { call, put, fork } from 'redux-saga/effects';
-import api from '../utils/api';
+import * as api from '../utils/api';
 import * as _ from 'lodash';
 function* getChartData(actions: any) {
     try {

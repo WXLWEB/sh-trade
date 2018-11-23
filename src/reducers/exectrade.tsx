@@ -1,6 +1,7 @@
 import * as Immutable from 'immutable';
 import { List } from 'immutable';
 import * as _ from 'lodash';
+
 export class IExectrade extends Immutable.Record({
     Trades: Immutable.List([{
       ShortTime: '-',

@@ -1,6 +1,5 @@
 import { ILogout } from '../constants/ReducerType';
 import { ILogoutAction } from '../constants/ActionType';
-
 import cookie from 'react-cookie';
 
 const initialState: ILogout = {

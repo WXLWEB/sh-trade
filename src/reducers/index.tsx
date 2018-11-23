@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux';
 import { routerReducer as routing } from 'react-router-redux';
-import { reducer } from 'redux-form/immutable';
 import locales from './locales';
 import account from './account';
 import ticker from './ticker';
@@ -26,7 +25,6 @@ import localStorage from './localStorage';
 import tickers from './tickers';
 
 const rootReducer = combineReducers({
-  form: reducer,
   routing,
   locales,
   account,
