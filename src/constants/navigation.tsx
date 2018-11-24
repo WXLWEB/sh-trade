@@ -1,6 +1,4 @@
-import env from './env/index';
-
-interface INavigation {
+export interface INavigation {
     [index: number]: {
         id: string;
         message: string;
@@ -32,12 +30,12 @@ const Navigation: INavigation = [
     }, {
         id: 'login',
         message: 'header_navigation_message_signin',
-        link: null,
+        link: '',
         list: [],
     }, {
         id: 'signup',
         message: 'header_navigation_message_sign_up',
-        link: null,
+        link: '',
         list: [],
     },
 ];

@@ -8,7 +8,7 @@ export const register = ({ mobile, password, sms_key, sms_code }) => fetchBase('
 export const getSmsVcode = ({ mobile }) => fetchBase('/api/v1/vcode/sms', 'POST', { mobile });
 
 export const getChartData = async (payload) => {
-  return await fetch(`${env.API_CHART_URL}?symbol=ETHCNY&from=${payload.startTime}&to=${payload.endTime}`).then((response) => {
+  return await fetch(`${env.CHART_URL}?symbol=ETHCNY&from=${payload.startTime}&to=${payload.endTime}`).then((response) => {
     if (response.status === 200) {
       return response.json();
     }

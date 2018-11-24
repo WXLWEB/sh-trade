@@ -1,6 +1,11 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
     "outDir": "build/dist",
     "module": "esnext",
     "target": "es5",
@@ -11,16 +16,15 @@
     "jsx": "react",
     "moduleResolution": "node",
     "rootDir": "src",
+    "downlevelIteration": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "noUnusedParameters": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": false,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "noUnusedParameters": false,
+    "suppressImplicitAnyIndexErrors": false,
+    "noUnusedLocals": false
   },
   "exclude": [
     "node_modules",

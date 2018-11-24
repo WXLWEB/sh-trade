@@ -1,14 +1,11 @@
 import * as React from 'react';
 import { List } from 'immutable';
+import { FormattedMessage } from 'react-intl';
 import * as classNames from 'classnames';
-
-import './App.less';
 
 // import logo from '@/app/assets/images/logo.png';
 
 interface IHeaderProps {
-    logoBlack: any;
-    logoWhite: any;
     Navigation: any;
     pathname: string;
     hasAccount: boolean;
@@ -40,15 +37,15 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
         this.showSubMenu = this.showSubMenu.bind(this);
     }
 
-    toggleMenu() {
+    public toggleMenu() {
         this.setState({ isMenuOpen: !this.state.isMenuOpen });
     }
 
-    toggleSubMenu() {
+    public toggleSubMenu() {
         this.setState({ isSubMenuOpen: !this.state.isSubMenuOpen });
     }
 
-    showSubMenu(index: number) {
+    public showSubMenu(index: number) {
         const i = this.state.openSubMenu.indexOf(index);
         if (i === -1) {
             this.setState({ openSubMenu: this.state.openSubMenu.push(index) });
@@ -57,8 +54,8 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
         this.setState({ openSubMenu: this.state.openSubMenu.remove(i) });
     }
 
-    render() {
-        const { logoWhite, logoBlack, Navigation, hasAccount, logout, account, showPopup, showRegisterPopup, pathname, product } = this.props;
+    public render() {
+        const { Navigation, hasAccount, logout, account, showPopup, showRegisterPopup, pathname } = this.props;
         const { isMenuOpen, openSubMenu } = this.state;
         const transparent = pathname === '/' && this.state.isTransparent && this.props.isHome ? true : false;
         return (
@@ -66,13 +63,12 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
                 classNames({
                     header: true,
                     white: !transparent,
-                    transparent: transparent,
                 })
             }>
                 <div className='container'>
-                    // <div className='menuBar'>
-                    //     <MenuIcon onClick={this.toggleMenu} isMenuOpen={this.state.isMenuOpen} />
-                    // </div>
+                    {/* <div className='menuBar'>
+                        <MenuIcon onClick={this.toggleMenu} isMenuOpen={this.state.isMenuOpen} />
+                    </div> */}
                     <div
                         className={classNames({
                             navigation: true,
@@ -82,7 +78,7 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
                     >
                         <ul>
                             {
-                                Navigation.map((items, i) => {
+                                Navigation.map((items: any) => {
                                     if (hasAccount && (items.id === 'signup' || items.id === 'login')) {
                                         return null;
                                     }
@@ -108,7 +104,7 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
                                     </a>
                                     <ul className='subMenu' style={isMenuOpen ? { display: (openSubMenu.indexOf(-1) !== -1) ? 'block' : 'none' } : {}}>
                                         <li>
-                                            <a href={env.DEPOSIT_WITHDRAW_URL}>
+                                            <a href='/'>
                                                 <FormattedMessage id='header_navigation_message_account_home' />
                                             </a>
                                         </li>

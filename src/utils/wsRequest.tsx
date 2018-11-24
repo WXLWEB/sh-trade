@@ -1,7 +1,6 @@
 import wsSignature from './wsSignature';
 
 const moment = require('moment');
-
 const createRequest = (type) => {
   return {
     MsgType: type,
@@ -10,16 +9,16 @@ const createRequest = (type) => {
 };
 
 const createSignedRequest = (type) => {
-  const request = createRequest(type);
+  let request:any = createRequest(type);
   const date = new Date();
   request.Date = moment(date).format('YYYYMMDD'); // 20160520
-  request.Account = spotAccountID;
+  // request.Account = spotAccountID;
   return request;
 };
 
 const signedRequest = (request, fields) => {
   const headers = [request.MsgType, request.CRID, request.Date, request.Account];
-  const concatArray = [];
+  let concatArray = [];
   if (fields) {
     concatArray = headers.concat(fields);
   }else {
@@ -31,21 +30,21 @@ const signedRequest = (request, fields) => {
 };
 
 const createGetTradesRequest = (symbol, count) => {
-  const request = createRequest('GetTradesRequest');
+  let request:any = createRequest('GetTradesRequest');
   request.Count = count;
   request.Symbol = symbol;
   return JSON.stringify(request);
 };
 
 const createQuoteRequest = (symbol, type) => {
-  const request = createRequest('QuoteRequest');
+  let request:any = createRequest('QuoteRequest');
   request.Symbol = symbol;
   request.QuoteType = type;
   return JSON.stringify(request);
 };
 
 const createGetOrdersRequest = (symbol, begin, end, status) => {
-  const request = createSignedRequest('GetOrdersRequest');
+  let request:any = createSignedRequest('GetOrdersRequest');
   request.Symbol = symbol;
   request.Status = status;
   request.Begin = begin;
@@ -55,37 +54,37 @@ const createGetOrdersRequest = (symbol, begin, end, status) => {
 };
 
 const createLoginRequest = () => {
-  const request = createSignedRequest('LoginRequest');
-  signedRequest(request);
+  let request:any = createSignedRequest('LoginRequest');
+  signedRequest(request, []);
   return JSON.stringify(request);
 };
 
 const createLogoutRequest = () => {
-  const request = createSignedRequest('LogoutRequest');
-  signedRequest(request);
+  let request:any = createSignedRequest('LogoutRequest');
+  signedRequest(request, []);
   return JSON.stringify(request);
 };
 
 const createGetAccountInfoRequest = () => {
-  const request = createSignedRequest('GetAccountInfoRequest');
-  signedRequest(request);
+  let request:any = createSignedRequest('GetAccountInfoRequest');
+  signedRequest(request, []);
   return JSON.stringify(request);
 };
 
 const createSubscribeRequest = () => {
-  const request = createSignedRequest('SubscribeRequest');
-  signedRequest(request);
+  let request:any = createSignedRequest('SubscribeRequest');
+  signedRequest(request, []);
   return JSON.stringify(request);
 };
 
 const createUnsubscribeRequest = () => {
-  const request = createSignedRequest('UnsubscribeRequest');
-  signedRequest(request);
+  let request:any = createSignedRequest('UnsubscribeRequest');
+  signedRequest(request, []);
   return JSON.stringify(request);
 };
 
 const createPlaceOrderRequest = (symbol, side, orderType, quantity, price, stopPrice) => {
-  const request = createSignedRequest('PlaceOrderRequest');
+  let request:any = createSignedRequest('PlaceOrderRequest');
   request.Symbol = symbol;
   request.Side = side;
   request.OrderType = orderType;
@@ -97,7 +96,7 @@ const createPlaceOrderRequest = (symbol, side, orderType, quantity, price, stopP
 };
 
 const createCancelOrderRequest = (symbol, OID) => {
-  const request = createSignedRequest('CancelOrderRequest');
+  let request:any = createSignedRequest('CancelOrderRequest');
   request.Symbol = symbol;
   request.OID = OID;
   signedRequest(request, [symbol, OID]);
@@ -105,7 +104,7 @@ const createCancelOrderRequest = (symbol, OID) => {
 };
 
 const createCancelReplaceOrderRequest = (symbol, OID, quantity, price, stopPrice, oldQuantity) => {
-  const request = createSignedRequest('CancelReplaceOrderRequest');
+  let request:any = createSignedRequest('CancelReplaceOrderRequest');
   request.Symbol = symbol;
   request.OID = OID;
   request.Quantity = quantity;
@@ -117,7 +116,7 @@ const createCancelReplaceOrderRequest = (symbol, OID, quantity, price, stopPrice
 };
 
 const createRetrieveTransactionsRequest = (symbol, Start, End, Filter, PageIndex, RecCountsPerPage) => {
-  const request = createSignedRequest('RetrieveTransactionsRequest');
+  let request:any = createSignedRequest('RetrieveTransactionsRequest');
   request.Symbol = symbol;
   request.Start = Start;
   request.End = End;
@@ -129,7 +128,7 @@ const createRetrieveTransactionsRequest = (symbol, Start, End, Filter, PageIndex
 };
 
 const createAllOrdersRequest = (Symbol, Side, HighPrice, LowPrice) => {
-  const request = createSignedRequest('CancelAllOrdersRequest');
+  let request:any = createSignedRequest('CancelAllOrdersRequest');
   request.Symbol = Symbol;
   request.Side = Side;
   request.HighPrice = HighPrice;
@@ -139,12 +138,12 @@ const createAllOrdersRequest = (Symbol, Side, HighPrice, LowPrice) => {
 };
 
 const createGetActiveContractsRequest = () => {
-  const request = createRequest('GetActiveContractsRequest');
+  let request:any = createRequest('GetActiveContractsRequest');
   return JSON.stringify(request);
 };
 
 const createQueryDealQuoteRequest = (Symbol, Side) => {
-  const request = createSignedRequest('QueryDealQuoteRequest');
+  let request:any = createSignedRequest('QueryDealQuoteRequest');
   request.Symbol = Symbol;
   request.Side = Side;
   signedRequest(request, [Symbol, Side]);
@@ -152,7 +151,7 @@ const createQueryDealQuoteRequest = (Symbol, Side) => {
 };
 
 const createExecuteDealQuoteRequest = (Symbol, Quantity) => {
-  const request = createSignedRequest('ExecuteDealQuoteRequest');
+  let request:any = createSignedRequest('ExecuteDealQuoteRequest');
   request.Symbol = Symbol;
   request.Quantity = Quantity;
   signedRequest(request, [Symbol, Quantity]);

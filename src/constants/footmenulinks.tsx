@@ -1,4 +1,3 @@
-import env from './env/index';
 interface IFooterMenuLinks {
     [index: number]: {
         id: string;
@@ -19,17 +18,17 @@ const FooterMenuLinks: IFooterMenuLinks = [
     {
         id: 'fee',
         message: 'footer_navigation_message_fee',
-        link: `${env.BTCCHINA_HOME_URL}/fees`,
+        link: `/fees`,
         list: [],
     }, {
         id: 'developer',
         message: 'footer_navigation_message_developer',
-        link: `${env.BTCCHINA_HOME_URL}/apidocs`,
+        link: `/apidocs`,
         list: [
             {
                 id: 'jobs',
                 isBelongHome: false,
-                link: `${env.BTCCHINA_HOME_URL}/jobs/index-en.html`,
+                link: `/jobs/index-en.html`,
                 message: 'footer_navigation_message_jobs',
             },
         ],
@@ -40,12 +39,12 @@ const FooterMenuLinks: IFooterMenuLinks = [
             {
                 id: 'btcc',
                 isBelongHome: false,
-                link: env.HOME_URL,
+                link: '/',
                 message: 'footer_navigation_message_network_btcc',
             }, {
                 id: 'minpool',
                 isBelongHome: false,
-                link: `${env.BTCCHINA_POOL_URL}`,
+                link: '/',
                 message: 'footer_navigation_message_resources_minpool',
             },
         ],

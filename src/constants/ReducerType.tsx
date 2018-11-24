@@ -14,15 +14,15 @@ const lang = getDefaultLang();
 export class IAccount extends Immutable.Record({
     content: Immutable.Map({}),
 }) {
-    readonly content: Object;
+    readonly content: any;
 }
 
 export class ILocales extends Immutable.Record({
     lang: lang,
     messages: locales[lang],
 }) {
-    readonly lang: string;
-    readonly messages: Object;
+    readonly lang: any;
+    readonly messages: any;
 }
 
 export interface ILogout {
