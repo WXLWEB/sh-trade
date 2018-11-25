@@ -1,23 +1,26 @@
 import * as React from 'react';
-import { List } from 'immutable';
 import { FormattedMessage } from 'react-intl';
-import * as classNames from 'classnames';
+import { Link } from 'react-router';
+import { Select, Menu, Icon, Popover, Input, Badge, Button } from 'antd';
+import classNames from 'classnames';
+import { LeftNavigation, RightNavigation } from '@/constants/navigation';
+import './index.less'
+import logo from '@/assets/images/logo.png';
 
-// import logo from '@/app/assets/images/logo.png';
+const Option = Select.Option;
 
 interface IHeaderProps {
-    Navigation: any;
-    pathname: string;
-    hasAccount: boolean;
-    logout: any;
-    account: string;
-    product?: string;
-    showPopup: () => void;
-    showRegisterPopup: any;
-    isHome: boolean;
+    readonly location: any;
+    readonly hasAccount: boolean;
+    // logout: any;
+    // account: string;
+    // product?: string;
+    // showPopup: () => void;
+    // showRegisterPopup: any;
+    // isHome: boolean;
 }
 interface IHeaderState {
-    isMenuOpen?: any;
+    menuVisible: boolean;
     isSubMenuOpen?: any;
     openSubMenu?: any;
     isTransparent?: boolean;
@@ -27,101 +30,153 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
     constructor(props: IHeaderProps, context: any) {
         super(props, context);
         this.state = {
-            isMenuOpen: false,
-            isSubMenuOpen: false,
-            openSubMenu: List(),
-            isTransparent: false,
+          menuVisible: false,
         };
-        this.toggleMenu = this.toggleMenu.bind(this);
-        this.toggleSubMenu = this.toggleSubMenu.bind(this);
-        this.showSubMenu = this.showSubMenu.bind(this);
     }
+      // static contextTypes = {
+      //   router: PropTypes.object.isRequired,
+      //   intl: PropTypes.object.isRequired,
+      //   isMobile: PropTypes.bool.isRequired,
+      // }
 
-    public toggleMenu() {
-        this.setState({ isMenuOpen: !this.state.isMenuOpen });
-    }
+      componentDidMount() {
+        const { intl, router } = this.context;
+        console.log('context:', this.context)
+      }
 
-    public toggleSubMenu() {
-        this.setState({ isSubMenuOpen: !this.state.isSubMenuOpen });
-    }
+      handleShowMenu = () => {
+        this.setState({
+          menuVisible: true,
+        });
+      }
 
-    public showSubMenu(index: number) {
-        const i = this.state.openSubMenu.indexOf(index);
-        if (i === -1) {
-            this.setState({ openSubMenu: this.state.openSubMenu.push(index) });
-            return;
+      handleHideMenu = () => {
+        this.setState({
+          menuVisible: false,
+        });
+      }
+
+      onMenuVisibleChange = (visible) => {
+        this.setState({
+          menuVisible: visible,
+        });
+      }
+
+      handleLangChange = () => {
+        const { location: { pathname } } = this.props;
+        const currentProtocol = `${window.location.protocol}//`;
+        const currentHref = window.location.href.substr(currentProtocol.length);
+      }
+
+      public render() {
+        const { menuVisible } = this.state;
+        const { hasAccount } = this.props;
+        // const { isMobile } = this.context;
+        const isMobile = false;
+        const menuMode = isMobile ? 'inline' : 'horizontal';
+        const {
+          location,
+        } = this.props;
+        const module = location.pathname.replace(/(^\/|\/$)/g, '').split('/').slice(0, -1).join('/');
+        let activeMenuItem = module || 'home';
+        if (activeMenuItem === 'components' || location.pathname === 'changelog') {
+          activeMenuItem = 'docs/react';
         }
-        this.setState({ openSubMenu: this.state.openSubMenu.remove(i) });
-    }
+        // const { intl: { locale } } = this.context;
+        const locale = 'zh-CN';
+        const isZhCN = true;
 
-    public render() {
-        const { Navigation, hasAccount, logout, account, showPopup, showRegisterPopup, pathname } = this.props;
-        const { isMenuOpen, openSubMenu } = this.state;
-        const transparent = pathname === '/' && this.state.isTransparent && this.props.isHome ? true : false;
+        const headerClassName = classNames({
+          clearfix: true,
+        });
+
+        const menu = [
+          <Select
+            defaultValue="简体中文"
+            suffixIcon={<Icon type="caret-down" />}
+            className="header-lang-button"
+            style={{ width: 100 }}
+            onChange={this.handleLangChange}>
+            <Option value="zh-CN">简体中文</Option>
+            <Option value="en-EN">English</Option>
+          </Select>,
+          <Menu className="menu-site" mode={menuMode} selectedKeys={[activeMenuItem]} id="nav" key="nav">
+            {
+              RightNavigation.map((item: any, i: number) => {
+                if (hasAccount && (item.id === 'signup' || item.id === 'login')) {
+                    return null;
+                }
+                return (!!item.link ?
+                  <Menu.Item key={item.id}>
+                    <Link to={item.link}>
+                      <FormattedMessage id={item.message} />
+                    </Link>
+                  </Menu.Item> :
+                  <Menu.Item key={item.id} id={item.id}>
+                      <Link to={item.link}>
+                          <FormattedMessage id={item.message} />
+                      </Link>
+                  </Menu.Item>
+                )
+              })
+            }
+          </Menu>,
+        ];
+
+        const searchPlaceholder = locale === 'zh-CN' ? '在 ant.design 中搜索' : 'Search in ant.design';
         return (
-            <header className={
-                classNames({
-                    header: true,
-                    white: !transparent,
-                })
-            }>
-                <div className='container'>
-                    {/* <div className='menuBar'>
-                        <MenuIcon onClick={this.toggleMenu} isMenuOpen={this.state.isMenuOpen} />
-                    </div> */}
-                    <div
-                        className={classNames({
-                            navigation: true,
-                            isOpen: this.state.isMenuOpen,
-                            isSubMenuOpen: this.state.isSubMenuOpen,
-                        })}
-                    >
-                        <ul>
-                            {
-                                Navigation.map((items: any) => {
-                                    if (hasAccount && (items.id === 'signup' || items.id === 'login')) {
-                                        return null;
-                                    }
-                                    return (!!items.link ?
-                                      <li key={items.id} id={items.id}>
-                                          <a href={items.link}>
-                                              <FormattedMessage id={items.message} />
-                                          </a>
-                                      </li> :
-                                      <li key={items.id} id={items.id} onClick={items.id === 'login' ? showPopup : showRegisterPopup}>
-                                          <a>
-                                              <FormattedMessage id={items.message} />
-                                          </a>
-                                      </li>
-                                    )
-                                })
-                            }
-                            {
-                                hasAccount &&
-                                <li className='info' onClick={this.showSubMenu.bind(null, -1)}>
-                                    <a>
-                                        <span>{account}</span>
-                                    </a>
-                                    <ul className='subMenu' style={isMenuOpen ? { display: (openSubMenu.indexOf(-1) !== -1) ? 'block' : 'none' } : {}}>
-                                        <li>
-                                            <a href='/'>
-                                                <FormattedMessage id='header_navigation_message_account_home' />
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a onClick={logout}>
-                                                <FormattedMessage id='header_button_logout' />
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </header>
+          <header id="header" className={headerClassName}>
+            {isMobile && (
+              <Popover
+                overlayClassName="popover-menu"
+                placement="bottomRight"
+                content={menu}
+                trigger="click"
+                visible={menuVisible}
+                arrowPointAtCenter
+                onVisibleChange={this.onMenuVisibleChange}
+              >
+                <Icon
+                  className="nav-phone-icon"
+                  type="menu"
+                  onClick={this.handleShowMenu}
+                />
+              </Popover>
+            )}
+            <div className="container">
+              <div>
+                <Link to='/' id="logo">
+                  <img src={logo} />
+                </Link>
+                <Menu className="menu-site" mode={menuMode} selectedKeys={[activeMenuItem]} id="left-nav" key="nav">
+                  {
+                    LeftNavigation.map((item: any, i: number) => {
+                      if (hasAccount && (item.id === 'signup' || item.id === 'login')) {
+                          return null;
+                      }
+                      return (!!item.link ?
+                        <Menu.Item key={item.id}>
+                          <Link to={item.link}>
+                            <FormattedMessage id={item.message} />
+                          </Link>
+                        </Menu.Item> :
+                        <Menu.Item key={item.id} id={item.id}>
+                            <Link to={item.link}>
+                                <FormattedMessage id={item.message} />
+                            </Link>
+                        </Menu.Item>
+                      )
+                    })
+                  }
+                </Menu>
+              </div>
+              <div>
+                 {!isMobile && menu}
+               </div>
+            </div>
+          </header>
         );
-    }
+      }
 }
 
 export default Header;

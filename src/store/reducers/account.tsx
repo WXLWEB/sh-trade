@@ -1,7 +1,7 @@
 import { Map } from 'immutable';
 import * as Immutable from 'immutable';
 
-export interface IAccountAction {
+export interface AccountAction {
     payload: {
         account_key: string,
         id: number,
@@ -10,7 +10,7 @@ export interface IAccountAction {
     type: string;
 };
 
-export class IAccount extends Immutable.Record({
+export class AccountState extends Immutable.Record({
   accountKey: null,
   accountID: null,
   mobile: null,
@@ -21,9 +21,9 @@ export class IAccount extends Immutable.Record({
 }
 
 
-const initialState = new (IAccount);
+const initialState = new (AccountState);
 
-export default function account(state: IAccount = initialState, action: IAccountAction){
+export default function account(state: AccountState = initialState, action: AccountAction){
     switch (action.type) {
         case 'get account info success':
             // spotAccountKey = action.payload.account_key;

@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
-import { routerReducer as routing } from 'react-router-redux';
-import localesReducer from './locales';
-import account from './account';
+import { RouterState } from 'connected-react-router';
+import { default as accountReducer, AccountState } from './account';
+import { default as localesReducer, LocalesState } from './locales';
 import ticker from './ticker';
 import tos from './tos';
 import terms from './terms';
@@ -25,13 +25,14 @@ import localStorage from './localStorage';
 import tickers from './tickers';
 
 export type RootState = Readonly<{
-  routing,
-  locales,
+  router: RouterState;
+  locales: LocalesState,
+  account: AccountState,
 }>;
 
-export const rootReducer = combineReducers<RootState>({
-    routing,
+export const rootReducer = combineReducers<any>({
     locales: localesReducer,
+    account: accountReducer,
   }
 );
 

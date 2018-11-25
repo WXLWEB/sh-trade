@@ -11,7 +11,7 @@ const locales = {
 };
 const lang = getDefaultLang();
 
-export class ILocales extends Immutable.Record({
+export class LocalesState extends Immutable.Record({
     lang: lang,
     messages: locales[lang],
 }) {
@@ -19,14 +19,14 @@ export class ILocales extends Immutable.Record({
     readonly messages: Object;
 }
 
-export interface ILocalesAction {
+export interface LocalesAction {
     payload: {};
     type: string;
 };
 
-const initialState = new(ILocales);
+const initialState = new(LocalesState);
 
-export default function localesReducer(state: ILocales = initialState, action: ILocalesAction){
+export default function localesReducer(state: LocalesState = initialState, action: LocalesAction){
   switch (action.type) {
       case 'change lang':
         const userLang = action.payload ? action.payload === 'en' ? 'en' : 'zh' : state.lang === 'en' ? 'zh' : 'en';

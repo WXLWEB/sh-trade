@@ -16,7 +16,6 @@ ReactDOM.render(
     <ConnectedIntlProvider>
       <Router history={browserHistory}>
         <Route path='/' component={App}>
-          <IndexRoute  component={App}/>
         </Route>
       </Router>
     </ConnectedIntlProvider>

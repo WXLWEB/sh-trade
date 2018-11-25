@@ -2,9 +2,7 @@ import { connect } from 'react-redux';
 import { IntlProvider, addLocaleData } from 'react-intl';
 import * as en from 'react-intl/locale-data/en';
 import * as zh from 'react-intl/locale-data/zh';
-import { IaLLMapState } from '@/constants/AppType';
 
-// import { IConnectIntlState, IConnectIntlReturn } from '../../constants/ComponentsType';
 addLocaleData(en);
 addLocaleData(zh);
 

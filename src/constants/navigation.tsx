@@ -1,43 +1,80 @@
-export interface INavigation {
-    [index: number]: {
-        id: string;
-        message: string;
-        link?: string;
-        list: {
-            [index: number]: {
-                id: string;
-                isBelongHome: boolean;
-                isTrade: boolean;
-                tradeUrl?: string;
-                link: string;
-                message: string;
-            }
-        };
-    };
+import env from './env/index';
+
+interface INavigation {
+  id: string;
+  message: string;
+  link?: string;
+  list: {
+      [index: number]: {
+          id: string;
+          isBelongHome: boolean;
+          isTrade: boolean;
+          tradeUrl?: string;
+          link: string;
+          message: string;
+      }
+  };
 }
 
-const Navigation: INavigation = [
+type INavigations = Array<INavigation>
+
+export const LeftNavigation: INavigations = [
     {
-        id: 'simple',
-        message: 'header_navigation_message_simple',
+        id: 'home',
+        message: 'header_navigation_message_coin_to_coin',
+        link: `/`,
+        list: [],
+    },  {
+        id: 'trade',
+        message: 'header_navigation_message_c_to_c',
         link: `/`,
         list: [],
     }, {
-        id: 'profess',
-        message: 'header_navigation_message_professional',
-        link: `/fullscreen`,
+        id: 'innovative',
+        message: 'header_navigation_message_active',
+        link: `/`,
         list: [],
     }, {
-        id: 'login',
-        message: 'header_navigation_message_signin',
+        id: 'notice',
+        message: 'header_navigation_message_notice',
         link: '',
         list: [],
     }, {
-        id: 'signup',
-        message: 'header_navigation_message_sign_up',
+        id: 'help',
+        message: 'header_navigation_message_help',
         link: '',
         list: [],
     },
 ];
 
-export default Navigation;
+export const RightNavigation: INavigations = [
+    {
+        id: 'assets',
+        message: 'header_navigation_message_assets',
+        link: `/`,
+        list: [],
+    },  {
+        id: 'orders',
+        message: 'header_navigation_message_orders',
+        link: `/`,
+        list: [],
+    },  {
+        id: 'account',
+        message: 'header_navigation_message_account',
+        link: `/`,
+        list: [],
+    },  {
+        id: 'sign',
+        message: 'header_navigation_message_signin',
+        link: `/`,
+        list: [],
+    },  {
+        id: 'register',
+        message: 'header_navigation_message_sign_up',
+        link: `/`,
+        list: [],
+    }
+];
+
+
+// export default Navigation;
