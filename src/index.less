@@ -2,18 +2,20 @@
   margin: 0;
   padding: 0;
   outline: 0;
+  box-sizing: border-box;
 }
 *:focus, *:hover{
   outline: 0!important;
   box-shadow: none!important;
 }
-// .ant-button:after, .ant-select:after, .ant-select-selection:after {
-//   border: 0 none;
-//   opacity: 0;
-//   animation:none 0 ease 0 1 normal;
-//   outline: 0;
-//   box-shadow: none;
-// }
+.ant-btn:after, .ant-select:after, .ant-select-selection:after {
+  border: 0 none;
+  opacity: 0;
+  animation:none 0 ease 0 1 normal;
+  outline: 0;
+  box-shadow: none;
+  transition: none;
+}
 body {
   margin: 0;
   padding: 0;

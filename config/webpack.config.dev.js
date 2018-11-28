@@ -8,10 +8,20 @@ const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const loaders = require('./loaders');
+const AntDesignThemePlugin = require('antd-theme-webpack-plugin');
+const options = {
+  antDir: paths.antDir,
+  stylesDir: paths.stylesDir,
+  varFile: paths.varFile,
+  mainLessFile: paths.mainLessFile,
+  themeVariables: ['@primary-color', '@text-color'],
+  indexFileName: 'index.html'
+}
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
@@ -176,7 +186,14 @@ module.exports = {
     // solution that requires the user to opt into importing specific locales.
     // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
     // You can remove this if you don't use Moment.js:
+    new AntDesignThemePlugin(options),
+
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    //copy charting_library
+    // new CopyWebpackPlugin([
+    //   {context:'node_modules/charting_library/js/jquery-2.1.0.min.js', from:'**/*', to:'trade/charting_library/js', toType:'dir'},
+    //   {context:'node_modules/charting_library/charting_library/', from:'**/*', to:'trade/charting_library', toType:'dir'}
+    // ]),
     // Perform type checking and linting in a separate process to speed up compilation
     new ForkTsCheckerWebpackPlugin({
       async: true,

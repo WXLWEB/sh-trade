@@ -18,13 +18,13 @@
     "rootDir": "src",
     "downlevelIteration": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": false,
-    "noImplicitThis": false,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
-    "noUnusedParameters": false,
-    "suppressImplicitAnyIndexErrors": false,
-    "noUnusedLocals": false
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUnusedParameters": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": true
   },
   "exclude": [
     "node_modules",

@@ -1,4 +1,58 @@
 .App {
   text-align: center;
   background-color: #EFF2F5;
+  &>.content{
+    padding: 12px;
+  }
+  .box-1, .box-2{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    &>div{
+      height: 100%;
+      padding: 12px;
+    }
+  }
+  .box-1{
+    height: 504px;
+    &>div{
+      &:first-of-type{
+        min-width: 256px;
+        width: 20%;
+      }
+      &:nth-of-type(2){
+        min-width: 624px;
+        width: 60%;
+      }
+      &:nth-of-type(3){
+        min-width: 280px;
+        width: 20%;
+      }
+    }
+  }
+  .box-2{
+    height: 498px;
+    &>div{
+      &:first-of-type{
+        min-width: 256px;
+        width: 20%;
+      }
+      &:nth-of-type(2){
+        min-width: 480px;
+        width: 30%;
+      }
+      &:nth-of-type(3){
+        min-width: 424px;
+        width: 50%;
+      }
+    }
+  }
+  .box-3{
+    height: 475px;
+    min-width: 1208px;
+    &>div{
+      height: 100%;
+      padding:12px;
+    }
+  }
 }

@@ -1,12 +1,13 @@
-import { Rate } from 'antd';
 import * as React from 'react';
-import { Button } from 'antd';
 import Header from '@/components/Header';
-import logo from '@/assets/images/logo.png';
+import Assets from './Assets';
+import Chart from './Chart';
+import TimeSales from './TimeSales';
+import Orderbook from './Orderbook';
+import Trade from './Trade';
+import History from './History';
+import Introduce from './Introduce';
 import './App.less';
-
-// global.spotAccountKey = 'test';
-// global.spotAccountID = 'ptest2';
 
 export interface IAppProps {
   lang: any;
@@ -41,14 +42,28 @@ class App extends React.Component<IAppProps, IAppState> {
 
   public render() {
     // const { children } = this.props;
-    const { children, lang, location } = this.props;
+    const {location } = this.props;
     return (
       <div className="App">
         <Header
           hasAccount={false}
           location={location}
         />
-        {children}
+        <div className="content">
+          <div className="box-1">
+            <Assets />
+            <Chart />
+            <TimeSales />
+          </div>
+          <div className="box-2">
+            <Orderbook />
+            <Trade />
+            <History />
+          </div>
+          <div className="box-3">
+            <Introduce />
+          </div>
+        </div>
       </div>
     );
   }
