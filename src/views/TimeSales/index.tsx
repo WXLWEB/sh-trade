@@ -1,55 +1,53 @@
 import * as React from 'react';
-import Box from '@/components/Box';
+import { connect } from 'react-redux';
 import { Table } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
+import Box from '@/components/Box';
+import Filter from '@/filter'
 import './index.less';
 
 interface ITimeSales {
-  time: string;
-  price: string;
-  size: string;
+  ShortTime: number;
+  Price: number;
+  Quantity: number;
+  Side: string;
   width?: number;
   render: () => void;
 }
 
 const columns: ColumnProps<ITimeSales>[] = [{
   title: '时间',
-  dataIndex: 'time',
+  dataIndex: 'ShortTime',
   align: 'left',
   width: 60,
+  render: (item) => (
+    <Filter keyname="timestamp" value={item} />
+  )
 }, {
   title: '价格',
-  dataIndex: 'price',
+  dataIndex: 'Price',
   align: 'center',
   width: 80,
-  render: (item) => (
-    <div className={item > 0 ? 'red' : 'green'}>
+  render: (item, row) => (
+    <div className={row.Side === '1' ? 'green' : 'red'}>
       {item}
     </div>
   )
 }, {
   title: '数量',
-  dataIndex: 'size',
+  dataIndex: 'Quantity',
   align: 'right',
 }];
 
-let data:any[] = [];
-for (let i = 0; i < 13; i++) {
-  data.push({
-    key: i,
-    time: `BTC${i}`,
-    price: 32,
-    size: `${i}%`,
-  });
-}
-
 interface TimeSalesProps {
-
+  exectrade: any;
 }
 export type TimeSalesState = Readonly<any>;
 
-export default class TimeSales extends React.Component<TimeSalesProps, TimeSalesState>{
+class TimeSales extends React.Component<TimeSalesProps, TimeSalesState>{
   public render(){
+    const { exectrade } = this.props;
+    const data = exectrade.get('Trades').toJS();
     return(
       <div className="timesales">
         <Box
@@ -67,3 +65,13 @@ export default class TimeSales extends React.Component<TimeSalesProps, TimeSales
     )
   }
 }
+
+function mapStateToProps(state: any) {
+  return {
+    exectrade: state.exectrade,
+  };
+}
+
+export default connect(
+  mapStateToProps,
+)(TimeSales);

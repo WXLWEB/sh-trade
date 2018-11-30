@@ -1,6 +1,6 @@
 import { ILogout } from '@/constants/ReducerType';
 import { ILogoutAction } from '@/constants/ActionType';
-import cookie from 'react-cookie';
+import { removeToken } from '@/utils/token';
 
 const initialState: ILogout = {
   sequence: 'next',
@@ -9,9 +9,7 @@ const initialState: ILogout = {
 export default function logout(state: ILogout = initialState, action: ILogoutAction): ILogout {
   switch (action.type) {
     case 'logout requested':
-      cookie.remove('btcchina_jwt', { path: '/' });
-      cookie.remove('btcchina_jwt', { domain: '.btcc.com', path: '/' });
-      cookie.remove('btcchina_jwt', { domain: '.btcchina.com', path: '/' });
+      removeToken()
       return state;
     case 'logout failed':
       return state;

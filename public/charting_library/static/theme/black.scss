@@ -1,0 +1,528 @@
+/*
+variables
+*/
+//border.............
+$border-color1:   #303030;
+$border-color2:   #ccc;
+//font-color
+$font-color1:    #686868;
+$font-color2:    #A9A9A9;
+$font-color3:    #909090;
+//background-color
+$bg-color1:      #141414;
+$bg-color2:      #2A2A2A;
+$bg-color3:      #686868;
+//scrollbarcolor
+$scrollbarColor:        #686868;
+html,body{
+  scrollbar-arrow-color: #000;
+  scrollbar-face-color: $scrollbarColor;
+  scrollbar-3dlight-color: $scrollbarColor;
+  scrollbar-highlight-color: $scrollbarColor;
+  scrollbar-shadow-color: $scrollbarColor;
+  scrollbar-darkshadow-color: $scrollbarColor;
+  scrollbar-track-color: transparent;
+  outline: none;
+  ::-webkit-scrollbar {
+    width: 10px;
+    height:10px;
+    border: 3px solid transparent;
+  }
+  ::-webkit-scrollbar-button {  background-color: $scrollbarColor;}
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: none;
+    border-radius: 5px;
+    background: none;
+  }
+  ::-webkit-scrollbar-track-piece{
+    background: none;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background: $scrollbarColor;
+  }
+  ::-webkit-scrollbar-thumb:window-inactive {
+    background: $scrollbarColor;
+  }
+  ::-webkit-scrollbar-corner { background:none;}
+  ::-webkit-resizer {background:none;}
+}
+.chart-controls-bar {
+  background: #141414;
+}
+#library-container{
+  border: 0;
+  background-color: $bg-color1;
+}
+.loading-indicator {
+  background: #222;
+}
+.tv-close-panel {
+  background: #565A5D no-repeat 50% 50%;
+}
+.symbol-edit-widget .symbol-edit-wrap.expanded {
+  box-shadow: none;
+}
+
+.chart-page .chart-container {
+  border: 1px solid $border-color1;
+  background-color: $bg-color1;
+}
+#chart-area{
+  background-color: $bg-color1!important;
+}
+.tv-side-toolbar{
+  border-right:1px solid $border-color1;
+  background-color: $bg-color1!important;
+  .tools-group{
+    &:not(:first-child):not(.no-delimiter):before{
+      background: $border-color1;
+    }
+    .button{
+      border:1px solid $border-color1!important;
+      color:$font-color1;
+      background-color: $bg-color1!important;
+      &:hover,&:focus,&:active{
+        color:$font-color2;
+        border-color: $border-color2!important;
+        background-color: $bg-color1!important;
+      }
+      &.selected,&:not(.subgroup).selected{
+        color:$font-color2;
+        border-color: $border-color2!important;
+        background-color: $bg-color1!important;
+        &:hover,&:focus,&:active,&:visited{
+          color:$font-color2;
+          border-color: $border-color2!important;
+          background-color: $bg-color1!important;
+        }
+        .main{
+          color:$font-color2;
+          border-color: $border-color2!important;
+          background-color: $bg-color1!important;
+        }
+      }
+      &.active{
+        border-color: $border-color2;
+        background-color: $bg-color2;
+        .side{
+          background-color: $bg-color2;
+          &:hover,&:active,&:focus,&:visited{
+            background-color: $bg-color2;
+            border-color: $border-color2!important;
+          }
+        }
+      }
+      .side{
+        &:hover,&:active,&:focus{
+          background-color: $bg-color2;
+        }
+      }
+    }
+  }
+}
+.tv-main-panel{
+  .header-chart-panel{
+    .button.redo{
+      left: 0;
+    }
+    //header-chart buttons
+    input.symbol-edit, .symbol-search-dialog input,.favored-list-container span, .button,.button.disabled{
+      background-color: $bg-color1!important;
+      border-color: $border-color1;
+      color:$font-color1;
+      &:hover,&:focus,&:active{
+        color:$font-color2;
+        border-color: $border-color2;
+        background-color: $bg-color1!important;
+      }
+    }
+    .favored-list-container.active span.submenu, .favored-list-container span.submenu.active{
+      background-color: $bg-color1!important;
+      border-color: $border-color1!important;
+      color:$font-color1!important;
+    }
+    .button.active:hover{
+      color:$font-color2;
+      border-color: $border-color2;
+      background-color: $bg-color1!important;
+    }
+  }
+  //bottom-buttons
+  .chart-controls-bar-buttons{
+    a{
+      color: $font-color1;
+      &:hover {
+        background-color: $bg-color2;
+        color: $font-color3;
+      }
+      &.active{
+        color: $font-color3;
+        background-color: $bg-color2;
+      }
+    }
+  }
+}
+//chart-popup
+.charts-popup-list{
+  border-color: $border-color1;
+  background-color: $bg-color1!important;
+  color:$font-color1;
+  &.intervals-list .item{
+    color:$font-color1;
+  }
+  .item{
+    span{color: $font-color1;}
+    &.active{
+      background-color: $bg-color2;
+      color: $font-color3;
+      span{
+        color: $font-color3;
+      }
+    }
+    &:hover{
+      background-color: $bg-color2;
+      color: $font-color3;
+      span{
+        color: $font-color3;
+      }
+    }
+  }
+  .separator{
+    border-color: $border-color1;
+  }
+}
+//tv-dialog
+.tv-dialog{
+  background-color: $bg-color1;
+  color:$font-color3;
+  border-color: $border-color1;
+  .tv-dialog-title,.tv-dialog-message,.tv-dialog-content{
+    background-color: $bg-color1!important;
+    color:$font-color3;
+  }
+  .tv-dialog-error,.tv-dialog-title-close,.tv-dialog-title-close{color:$font-color3;background-color: $bg-color1!important;}
+  .name{color: $font-color1;}
+  .tv-dialog-content .tv-dialog-tree-item{
+    border-bottom: 1px solid $border-color1;
+    &.active{
+      background-color: $bg-color2;
+      color: $font-color3;
+    }
+    &:hover{
+      background-color: $bg-color2;
+      color: $font-color3;
+      span{
+        color: $font-color3;
+      }
+    }
+  }
+  .properties-tabs{
+    border-bottom: 1px solid $border-color1;
+
+    a.properties-tabs-label.active{
+      color: $font-color2;
+      &:after{
+        background-color: $font-color2;
+      }
+    }
+  }
+  .tv-select-container{
+    background-color: $bg-color1;
+    color:$font-color1;
+    border: 1px solid $border-color1;
+    &:hover:not(.sbHolderDisabled) a{
+      color: $font-color1;
+    }
+    .sbHolderOpen{
+      background-color: $bg-color1;
+      color:$font-color1;
+    }
+    .sbOptions{
+      border: 1px solid $border-color1;
+    }
+    .sbOptions,.sbHolderOpen{
+      background-color: $bg-color1;
+      a{
+        color:$font-color1;
+        &.active{
+          background-color: $bg-color2;
+          color: $font-color3;
+          span{
+            color: $font-color3;
+          }
+        }
+        &:hover{
+          background-color: $bg-color2;
+          color: $font-color3;
+          span{
+            color: $font-color3;
+          }
+        }
+      }
+    }
+  }
+  .tv-text-input.inset{
+    background-color: $bg-color1;
+    color:$font-color1;
+    border: 1px solid $border-color1;
+  }
+  .custom-select .switcher{
+    border-color: $border-color1;
+    background-color: $bg-color1;
+    color:$font-color3;
+  }
+  .tvcolorpicker-widget{
+    border: 1px solid $border-color1;
+  }
+  input.symbol-edit{
+    border-color: $border-color1;
+    background-color: $bg-color1;
+    color:$font-color3;
+  }
+  &.change-interval-dialog .tv-dialog-content .change-interval-input{
+    border: 1px solid $border-color1;
+    color: $font-color1;
+    background-color: $bg-color1!important;
+  }
+  &.change-interval-dialog .tv-dialog-content .change-interval-input.error{
+    background-color: $bg-color1;
+    color: $font-color2;
+    border: 1px solid $border-color1!important;
+  }
+}
+.properties-toolbar{
+  background-color: $bg-color1;
+  color: $font-color3;
+  border:1px solid $border-color1;
+  .tools-group{
+    .custom-select.simple .title .combobox-simple{
+      color:$font-color3;
+    }
+    .custom-select .switcher{
+      border-color: $border-color1;
+      background-color: $bg-color1;
+      color:$font-color3;
+    }
+    .colorpicker-widget{
+      border-color: $border-color1;
+      background-color: $bg-color1;
+      color:$font-color3;
+    }
+  }
+}
+
+.tvcolorpicker-popup{
+  background-color: $bg-color1;
+  border:1px solid $bg-color1;
+}
+.tv-button,.tv-button.ok,.tv-button.cancel{
+  color:$font-color3!important;
+  background: none;
+  background-color: $bg-color1;
+  border:1px solid $bg-color3;
+  &:hover,&:focus{
+    background-color: $bg-color3!important;
+    border:1px solid $bg-color3!important;
+  }
+}
+.custom-select .items{
+  background-color: $bg-color1;
+  border: 1px solid $border-color1;
+ .item{
+   color: $font-color1!important;
+   &.selected{
+     background-color: $bg-color2;
+     span{
+       color: $font-color3;
+     }
+   }
+   &:hover{
+     background-color: $bg-color2;
+     color: $font-color3;
+     span{
+       color: $font-color3;
+     }
+   }
+ }
+}
+.insert-study-dialog{
+  background-color: $bg-color1;
+  color:$font-color1;
+  border: 1px solid $border-color1;
+  .tv-dialog-title{
+    color:$font-color1;
+  }
+  .insert-study-items li{
+    &:hover{
+      background-color: $bg-color2;
+      color: $font-color3;
+    }
+  }
+}
+div.symbol-edit-popup{
+  margin-top: -1px;
+  background-color: $bg-color1;
+  color:$font-color1;
+  border: 1px solid $border-color1;
+  .filter{
+    display: none;
+  }
+  .symbol-edit-popup{
+    padding: 10px 0;
+    margin: 10px 0;
+    tr.symbol-edit-popup{
+      td{
+        color:$font-color1;
+        font-size: 13px;
+        strong{
+          font-size: 13px;
+          font-weight: normal;
+        }
+        span{
+          color:$font-color2;
+        }
+        &:first-of-type{
+          width: 80px;
+          color:$font-color2;
+          font-weight: normal;
+          padding-left:  15px;
+        }
+        &:nth-of-type(2){
+          width: 170px;
+        }
+        &:nth-of-type(3){
+          width: 150px;
+          text-align: left;
+        }
+        &:last-of-type{
+          width: 80px;
+          text-align: right;
+          padding-right:  15px;
+        }
+      }
+      &:hover{
+        background-color: $bg-color2;
+      }
+    }
+  }
+  .symbol-edit-popup{
+    .Pro + .Spot,  .Spot + .others {
+      margin-top: 10px;
+      padding-top: 10px;
+      box-sizing: content-box;
+      border-top: 1px solid $border-color2;
+    }
+  }
+  .table-wrapper{
+    border: none;
+  }
+  .symbol-edit-popup-active{
+    background:$bg-color2;
+  }
+}
+.chart-controls-bar-buttons a:before{
+  border-color: $border-color1;
+}
+.tv-close-panel{border-color: $border-color1;}
+.control-bar>svg,.back-to-present{border:1px solid #868686;
+  background:rgba(101,101,101,0.4);
+  zoom: 1;
+  opacity: 1;
+  &:hover{
+    background:rgba(101,101,101,0.8);
+  }
+}
+.pane-legend{
+  background: rgba(20,20,20,70);
+  opacity: 0.7;
+}
+.common-tooltip-wrapper.below{
+  border-radius: 4px;
+  &:before{
+    border-bottom: #444 8px solid;
+    opacity: 0.95;
+  }
+  &:after{
+    border: none;
+  }
+  .common-tooltip-body{
+    background: #444;
+    opacity: 0.95!important;
+    border: none;
+    padding: 0;
+    font-size: 12px;
+    color:$font-color3;
+    font-weight: normal;
+    text-align: left;
+  }
+  background: #444;
+  opacity: 0.95!important;
+  padding: 10px;
+  border: none;
+  &:after{
+    border-color: #444;
+    opacity: 0.95;
+  }
+}
+.save-load-buttons{
+  .title{
+    background-color: $bg-color1;
+    &.apply-common-tooltip{
+      background: $bg-color2!important;
+    }
+  }
+  >span{
+    border: none;
+    height: 17px;
+  }
+  .load{
+    border-right: 1px solid $border-color2;
+  }
+  .separator{
+    background: none;
+    background-color: $bg-color2;
+    &:before{
+      position: absolute;
+      top: 8px;
+      left: 0;
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 7px solid $bg-color1;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+  }
+}
+.symbol-edit-popup {
+  tr{
+    &:hover{
+      background-color: $bg-color2 !important;
+    }
+  }
+}
+.load-chart{
+  .charts-list-container .charts-list .item{
+    &:hover{
+      background-color: $bg-color2;
+    }
+  }
+  .chart-search{
+    border: none;
+    input{
+      background-color: $font-color3;
+    }
+  }
+}
+.tv-dialog-content form input[type=text]{
+  background-color: $font-color3;
+  border: none;
+}
+.price-axis{
+  background-color: $bg-color1;
+}
+.tv-side-toolbar{
+  border-right: 0;
+
+}

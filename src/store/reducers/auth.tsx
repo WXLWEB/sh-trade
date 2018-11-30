@@ -1,7 +1,7 @@
 import * as Immutable from 'immutable';
 import { handleActions } from 'redux-actions';
 
-const IAuthRecord = Immutable.Record({
+const AuthStateRecord = Immutable.Record({
     data: {},
     showLoginPopup: false,
     showRegisterPopup: false,
@@ -15,7 +15,7 @@ const IAuthRecord = Immutable.Record({
     smsKey: ''
 });
 
-export class IAuth extends IAuthRecord {
+export class AuthState extends AuthStateRecord {
     data: object;
     showLoginPopup: boolean;
     showRegisterPopup: boolean;
@@ -29,28 +29,28 @@ export class IAuth extends IAuthRecord {
     smsKey: string;
 }
 
-const initialState = new (IAuth);
+const initialState = new (AuthState);
 
 export default handleActions({
-    'show login popup'(state: IAuth = initialState) {
+    'show login popup'(state: AuthState = initialState) {
         return state.set('showLoginPopup', true);
     },
-    'close login popup'(state: IAuth = initialState) {
+    'close login popup'(state: AuthState = initialState) {
         return state.set('showLoginPopup', false);
     },
-    'show register popup'(state: IAuth = initialState) {
+    'show register popup'(state: AuthState = initialState) {
         return state.set('showRegisterPopup', true);
     },
-    'close register popup'(state: IAuth = initialState) {
+    'close register popup'(state: AuthState = initialState) {
         return state.set('showRegisterPopup', false);
     },
-    // 'login request'(state: IAuth = initialState) {
+    // 'login request'(state: AuthState = initialState) {
     //     return state.delete('error').set('loading', true);
     // },
-    'old login request'(state: IAuth = initialState) {
+    'old login request'(state: AuthState = initialState) {
         return state.delete('error').set('loading', true);
     },
-    'login request success'(state: IAuth = initialState, action: any) {
+    'login request success'(state: AuthState = initialState, action: any) {
         return state.set('loading', false)
             .set('loaded', true)
             .set('needCaptcha', false)
@@ -60,12 +60,12 @@ export default handleActions({
             .set('error', false)
             .update('data', v => Immutable.fromJS(action.payload));
     },
-    'login request failed'(state: IAuth = initialState, action: any) {
+    'login request failed'(state: AuthState = initialState, action: any) {
         return state.set('loading', false)
             .set('showError', true)
             .merge(Immutable.fromJS({ error: action.payload.message }));
     },
-    'register request success'(state: IAuth = initialState, action: any) {
+    'register request success'(state: AuthState = initialState, action: any) {
         return state.set('loading', false)
             .set('loaded', true)
             .set('needCaptcha', false)
@@ -75,36 +75,36 @@ export default handleActions({
             .set('error', false)
             .update('data', v => Immutable.fromJS(action.payload));
     },
-    'register request failed'(state: IAuth = initialState, action: any) {
+    'register request failed'(state: AuthState = initialState, action: any) {
         return state.set('loading', false)
             .set('showError', true)
             .merge(Immutable.fromJS({ error: action.payload.message }));
     },
-    'get sms vcode success'(state: IAuth = initialState, action: any) {
+    'get sms vcode success'(state: AuthState = initialState, action: any) {
       return state.set('smsKey', action.payload.key);
     },
-    'get sms vcode failed'(state: IAuth = initialState, action: any) {
+    'get sms vcode failed'(state: AuthState = initialState, action: any) {
       return state.set('loading', false)
           .set('showError', true)
           .merge(Immutable.fromJS({ error: action.payload.message }));
     },
-    'get account info success'(state: IAuth = initialState) {
+    'get account info success'(state: AuthState = initialState) {
         return state.set('showLoginPopup', false);
     },
-    'set old login request'(state: IAuth) {
+    'set old login request'(state: AuthState) {
         return state.set('oldLogin', true);
     },
-    'set new login request'(state: IAuth) {
+    'set new login request'(state: AuthState) {
         return state.set('oldLogin', false);
     },
-    'show gacode'(state: IAuth) {
+    'show gacode'(state: AuthState) {
         return state.set('needGaCode', true)
                     .set('needCaptcha', false);
     },
-    'hide gacode'(state: IAuth) {
+    'hide gacode'(state: AuthState) {
         return state.set('needGaCode', false);
     },
-    'logout requested'(state: IAuth) {
+    'logout requested'(state: AuthState) {
         return Immutable.fromJS({
             data: {},
             needCaptcha: false,

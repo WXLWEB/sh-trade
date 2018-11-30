@@ -154,6 +154,10 @@ module.exports = {
     ],
   },
   plugins: [
+    //copy charting_library
+    new CopyWebpackPlugin([
+      {context:'node_modules/charting_library/charting_library/', from:'**/*', to:'public/charting_library/', toType:'dir'}
+    ]),
     // Makes some environment variables available in index.html.
     // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
     // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
@@ -189,11 +193,6 @@ module.exports = {
     new AntDesignThemePlugin(options),
 
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    //copy charting_library
-    // new CopyWebpackPlugin([
-    //   {context:'node_modules/charting_library/js/jquery-2.1.0.min.js', from:'**/*', to:'trade/charting_library/js', toType:'dir'},
-    //   {context:'node_modules/charting_library/charting_library/', from:'**/*', to:'trade/charting_library', toType:'dir'}
-    // ]),
     // Perform type checking and linting in a separate process to speed up compilation
     new ForkTsCheckerWebpackPlugin({
       async: true,
@@ -217,4 +216,9 @@ module.exports = {
   performance: {
     hints: false,
   },
+  externals: {
+    // require("jquery") is external and available
+    //  on the global var jQuery
+    "jquery": "jQuery"
+  }
 };

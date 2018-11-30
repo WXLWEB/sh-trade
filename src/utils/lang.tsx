@@ -1,8 +1,8 @@
-import cookie from 'react-cookie';
+import Cookie from 'js-cookie';
 
 function getDefaultLang() {
   let nav = window.navigator;
-  return cookie.load('btcchina_lang') || (nav.language || '').split('-')[0] || 'zh';
+  return Cookie.get('ZG-lang') || (nav.language || '').split('-')[0] || 'zh';
 }
 
 export default getDefaultLang;

@@ -1,4 +1,4 @@
-import cookie from 'react-cookie';
+import Cookies from 'js-cookie';
 import * as Immutable from 'immutable';
 import { Map } from 'immutable';
 import enLocales from '@/resources/locales/en';
@@ -30,13 +30,8 @@ export default function localesReducer(state: LocalesState = initialState, actio
   switch (action.type) {
       case 'change lang':
         const userLang = action.payload ? action.payload === 'en' ? 'en' : 'zh' : state.lang === 'en' ? 'zh' : 'en';
-        cookie.save('btcchina_lang', userLang, {
-            domain: '.btcc.com',
-            path: '/',
-            expires: new Date(Date.now() + 8760 * 3600 * 1000),
-          });
-        cookie.save('btcchina_lang', userLang, {
-            domain: '.btcchina.com',
+        Cookies.set('ZG-Lang', userLang, {
+            domain: '',
             path: '/',
             expires: new Date(Date.now() + 8760 * 3600 * 1000),
           });

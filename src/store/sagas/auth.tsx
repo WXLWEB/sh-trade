@@ -1,5 +1,4 @@
 import { takeLatest } from 'redux-saga';
-import cookie from 'react-cookie';
 import { call, put, fork } from 'redux-saga/effects';
 import * as api from '@/utils/api';
 
@@ -11,6 +10,17 @@ function* login(action: any) {
         }
     } catch (e) {
          yield put({ type: 'login request failed', payload: e});
+    }
+}
+
+function* getAccountInfo(action: any) {
+    try {
+        const res = yield call(api.getAccountInfo, action.payload);
+        if (res) {
+          yield put({ type: 'get account info success', payload: res});
+        }
+    } catch (e) {
+         yield put({ type: 'get account info failed', payload: e});
     }
 }
 
@@ -38,6 +48,7 @@ function* getSmsVcode(action: any) {
 
 export default function* (): any {
     yield fork(takeLatest, 'login request', login);
+    yield fork(takeLatest, 'get account info', getAccountInfo);
     yield fork(takeLatest, 'register request', register);
     yield fork(takeLatest, 'get sms vcode', getSmsVcode);
 };

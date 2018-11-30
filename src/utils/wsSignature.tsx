@@ -1,8 +1,9 @@
+import global from  '@/constants/config'
  let jsSHA = require('jssha');
 
-const getSignature = (joinStr) => {
+const getSignature = (joinStr: string) => {
   var shaObj = new jsSHA(joinStr, 'TEXT');
-  var accKey = new jsSHA(123, 'TEXT').getHash('SHA-1', 'B64');
+  var accKey = new jsSHA(global.AccountKey, 'TEXT').getHash('SHA-1', 'B64');
   var hmac = shaObj.getHMAC(accKey, 'TEXT', 'SHA-1', 'HEX');
   return hmac;
 };

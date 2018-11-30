@@ -53,12 +53,12 @@ const importPluginOption = [
   {
     libraryName: 'antd',
     libraryDirectory: 'lib',
-    style: 'css'
+    style: true
   },
   {
     libraryName: 'antd-mobile',
     libraryDirectory: 'lib',
-    style: 'css',
+    style: true,
   }
 ];
 
@@ -68,7 +68,7 @@ const jsLoader = {
   include: paths.appSrc,
   loader: require.resolve('babel-loader'),
   options: {
-    
+
     compact: true,
   },
 };

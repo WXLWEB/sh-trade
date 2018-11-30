@@ -1,19 +1,12 @@
 import { takeLatest } from 'redux-saga';
 import { put, fork, select } from 'redux-saga/effects';
-import { SOCKET_URL } from '@/utils/urls';
-import * as _ from 'lodash';
+import isEmpty from 'lodash.isempty';
+import env from '@/constants/env';
+import global from  '@/constants/config'
 
 function* connectSocket() {
   yield put({ type: 'clear account info'});
-  // const random = Math.random();
-  let wsurl = SOCKET_URL;
-  // if (random < 0.95) {
-  //   wsurl = PROXY_URL;
-  // socket = 'proxy';
-  // }else {
-  //   wsurl = SOCKET_URL;
-  //   socket = 'ws';
-  // }
+  let wsurl = env.SOCKET_URL;
   const ws = {
     url: wsurl,
   };
@@ -25,11 +18,11 @@ function* closeSocket () {
   yield put({ type: 'clear account info'});
 };
 
-function* sendMessage (parameter: Object) {
+function* sendMessage (parameter: any) {
   yield put({type: 'SENDMESSAGE', payload: parameter});
 };
 
-function* socketConnected (parameter: Object) {
+function* socketConnected () {
   yield put({type: 'get active contracts request'});
   // yield put({type: 'start send public request'});
 };
@@ -41,13 +34,13 @@ function* receiveMessages(actions: any) {
       yield put({type: 'get active contracts response', payload: params});
       break;
     case 'QuoteResponse':
-      if (!_.isEmpty(params.Ticker) && Symbol === params.Ticker.Symbol) {
+      if (!isEmpty(params.Ticker) && global.CurrentSymbol === params.Ticker.Symbol) {
         yield put({type: 'get symbol ticker', payload: params.Ticker});
       }
-      if (!_.isEmpty(params.Ticker) && Symbol === params.Ticker.Symbol) {
+      if (!isEmpty(params.Ticker) && global.CurrentSymbol === params.Ticker.Symbol) {
         yield put({type: 'get premium adjustment', payload: params.Ticker});
       }
-      if (!_.isEmpty(params.OrderBook) && Symbol === params.OrderBook.Symbol) {
+      if (!isEmpty(params.OrderBook) && global.CurrentSymbol === params.OrderBook.Symbol) {
         yield put({type: 'get full orderbook', payload: params.OrderBook});
       }
       break;
@@ -109,7 +102,7 @@ function* receiveMessages(actions: any) {
       yield put({type: 'execute deal quote response' , payload: params});
       break;
     case 'GetOrdersResponse':
-      if (!_.isEmpty(params.Orders)) {
+      if (!isEmpty(params.Orders)) {
         yield put({type: 'exec report order response array', payload: params.Orders});
       };
       break;

@@ -1,22 +1,23 @@
+import global from  '@/constants/config'
 import wsSignature from './wsSignature';
 
 const moment = require('moment');
-const createRequest = (type) => {
+const createRequest = (type: string) => {
   return {
     MsgType: type,
     CRID: wsSignature.getUniqueID(),
   };
 };
 
-const createSignedRequest = (type) => {
+const createSignedRequest = (type: string) => {
   let request:any = createRequest(type);
   const date = new Date();
   request.Date = moment(date).format('YYYYMMDD'); // 20160520
-  // request.Account = spotAccountID;
+  request.Account = global.AccountID;
   return request;
 };
 
-const signedRequest = (request, fields) => {
+const signedRequest = (request: any, fields: any) => {
   const headers = [request.MsgType, request.CRID, request.Date, request.Account];
   let concatArray = [];
   if (fields) {
@@ -29,21 +30,21 @@ const signedRequest = (request, fields) => {
   return request;
 };
 
-const createGetTradesRequest = (symbol, count) => {
+const createGetTradesRequest = (symbol: string, count: string) => {
   let request:any = createRequest('GetTradesRequest');
   request.Count = count;
   request.Symbol = symbol;
   return JSON.stringify(request);
 };
 
-const createQuoteRequest = (symbol, type) => {
+const createQuoteRequest = (symbol: string, type: string) => {
   let request:any = createRequest('QuoteRequest');
   request.Symbol = symbol;
   request.QuoteType = type;
   return JSON.stringify(request);
 };
 
-const createGetOrdersRequest = (symbol, begin, end, status) => {
+const createGetOrdersRequest = (symbol: string, begin: string, end: string, status: string) => {
   let request:any = createSignedRequest('GetOrdersRequest');
   request.Symbol = symbol;
   request.Status = status;
@@ -83,7 +84,7 @@ const createUnsubscribeRequest = () => {
   return JSON.stringify(request);
 };
 
-const createPlaceOrderRequest = (symbol, side, orderType, quantity, price, stopPrice) => {
+const createPlaceOrderRequest = (symbol: string, side: string, orderType: string, quantity: string, price: string, stopPrice: string) => {
   let request:any = createSignedRequest('PlaceOrderRequest');
   request.Symbol = symbol;
   request.Side = side;
@@ -95,7 +96,7 @@ const createPlaceOrderRequest = (symbol, side, orderType, quantity, price, stopP
   return JSON.stringify(request);
 };
 
-const createCancelOrderRequest = (symbol, OID) => {
+const createCancelOrderRequest = (symbol: string, OID: string) => {
   let request:any = createSignedRequest('CancelOrderRequest');
   request.Symbol = symbol;
   request.OID = OID;
@@ -103,7 +104,7 @@ const createCancelOrderRequest = (symbol, OID) => {
   return JSON.stringify(request);
 };
 
-const createCancelReplaceOrderRequest = (symbol, OID, quantity, price, stopPrice, oldQuantity) => {
+const createCancelReplaceOrderRequest = (symbol: string, OID: string, quantity: string, price: string, stopPrice: string, oldQuantity: string) => {
   let request:any = createSignedRequest('CancelReplaceOrderRequest');
   request.Symbol = symbol;
   request.OID = OID;
@@ -115,7 +116,7 @@ const createCancelReplaceOrderRequest = (symbol, OID, quantity, price, stopPrice
   return JSON.stringify(request);
 };
 
-const createRetrieveTransactionsRequest = (symbol, Start, End, Filter, PageIndex, RecCountsPerPage) => {
+const createRetrieveTransactionsRequest = (symbol: string, Start: string, End: string, Filter: string, PageIndex: string, RecCountsPerPage: string) => {
   let request:any = createSignedRequest('RetrieveTransactionsRequest');
   request.Symbol = symbol;
   request.Start = Start;
@@ -127,7 +128,7 @@ const createRetrieveTransactionsRequest = (symbol, Start, End, Filter, PageIndex
   return JSON.stringify(request);
 };
 
-const createAllOrdersRequest = (Symbol, Side, HighPrice, LowPrice) => {
+const createAllOrdersRequest = (Symbol: string, Side: string, HighPrice: string, LowPrice: string) => {
   let request:any = createSignedRequest('CancelAllOrdersRequest');
   request.Symbol = Symbol;
   request.Side = Side;
@@ -142,7 +143,7 @@ const createGetActiveContractsRequest = () => {
   return JSON.stringify(request);
 };
 
-const createQueryDealQuoteRequest = (Symbol, Side) => {
+const createQueryDealQuoteRequest = (Symbol: string, Side: string) => {
   let request:any = createSignedRequest('QueryDealQuoteRequest');
   request.Symbol = Symbol;
   request.Side = Side;
@@ -150,7 +151,7 @@ const createQueryDealQuoteRequest = (Symbol, Side) => {
   return JSON.stringify(request);
 };
 
-const createExecuteDealQuoteRequest = (Symbol, Quantity) => {
+const createExecuteDealQuoteRequest = (Symbol: string, Quantity: string) => {
   let request:any = createSignedRequest('ExecuteDealQuoteRequest');
   request.Symbol = Symbol;
   request.Quantity = Quantity;

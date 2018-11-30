@@ -9,13 +9,15 @@ import configureStore from '@/store/configureStore';
 import '@/index.less';
 
 const store = configureStore({});
-// const history = syncHistoryWithStore(browserHistory, store);
 
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedIntlProvider>
       <Router history={browserHistory}>
-        <Route path='/' component={App}>
+        <Route path='/'>
+          <IndexRoute component={App}/>
+          <Route path='/:symbol' component={App}>
+          </Route>
         </Route>
       </Router>
     </ConnectedIntlProvider>

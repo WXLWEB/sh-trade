@@ -1,20 +1,47 @@
 .orderbook{
+  .table-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 0 24px;
+    font-size: 12px;
+    &>div{
+      padding: 5px 0;
+    }
+  }
   .ant-card-body{
-    height: 400px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    .conent{
+      height: 380px;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
   }
   .new-price{
     border-top: 1px solid #EDF1F7;
     border-bottom: 1px solid #EDF1F7;
     display: flex;
     justify-content: space-between;
-    padding: 8px 24px;
+    padding: 8px 0;
+    margin: 0 24px;
   }
   .orderbook-table{
     margin: 0 24px;
     font-size: 12px;
     overflow: scroll;
+    &.ask{
+      tr>td{
+        &:first-of-type{
+          color: #DD4546!important;
+        }
+      }
+    }
+    &.bid{
+      tr>td{
+        &:first-of-type{
+          color: #07B256!important;
+        }
+      }
+    }
     .green{
       color: #07B256;
     }

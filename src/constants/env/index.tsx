@@ -11,7 +11,6 @@ const env = { development, staging, production }[process.env.DEPLOY_ENV || 'deve
   ENV: string;
   API_URL: string;
   SOCKET_URL: string;
-  PROXY_URL: string;
   CHART_URL: string;
 }
 

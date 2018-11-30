@@ -1,6 +1,10 @@
 import * as React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { browserHistory } from 'react-router';
 import { Icon, Tabs, Input, Button, Table } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
+import { ActiveContractsState } from '@/store/reducers/activeContracts';
 import Box from '@/components/Box';
 import './index.less';
 
@@ -39,28 +43,48 @@ const columns: ColumnProps<ICoins>[] = [{
   )
 }];
 
-let data:any[] = [];
-for (let i = 0; i < 10; i++) {
-  data.push({
-    key: i,
-    coin: `BTC${i}`,
-    lastPrice: 32,
-    percent: `${i}%`,
-  });
-}
+// let data:any[] = [];
+// for (let i = 0; i < 10; i++) {
+//   data.push({
+//     key: i,
+//     coin: `BTC${i}`,
+//     lastPrice: 32,
+//     percent: `${i}%`,
+//   });
+// }
 
 interface AssetsProps {
-
+  activeContracts: ActiveContractsState;
 }
 export type AssetsState = Readonly<any>;
 
-export default class Assets extends React.Component<AssetsProps, AssetsState>{
+class Assets extends React.Component<AssetsProps, AssetsState>{
+  constructor(props: AssetsProps) {
+    super(props);
+  };
 
   protected handleTabChange = () => {
 
   }
 
   public render(){
+    const { activeContracts } = this.props;
+    const CNZData: any[] = activeContracts.contracts.CNZ.map((obj: any, i: number) => {
+      return {
+        key: i,
+        coin: obj.Symbol,
+        lastPrice: 32,
+        percent: `${i}%`,
+      }
+    })
+    const ETHData: any[] = activeContracts.contracts.ETH.map((obj: any, i: number) => {
+      return {
+        key: i,
+        coin: obj.Symbol,
+        lastPrice: 32,
+        percent: `${i}%`,
+      }
+    })
     const optional = <Button
       style={{ lineHeight: '32px', border: 'none', padding: '0', background: 'none' }}
       onClick={this.handleTabChange}
@@ -82,13 +106,36 @@ export default class Assets extends React.Component<AssetsProps, AssetsState>{
                     size='small'
                     className="coin-table"
                     columns={columns}
-                    dataSource={data}
+                    dataSource={CNZData}
                     pagination={false}
                     bordered={false}
-                    scroll={{ y: 300 }} />
+                    scroll={{ y: 300 }}
+                    onRow={(record) => {
+                      return {
+                        onClick: () => {
+                          browserHistory.push(record.coin.toLowerCase())
+                        },
+                      }
+                    }}
+                  />
                 </TabPane>
                 <TabPane tab="ETH" key='eth'>
-                  ETH
+                  <Table
+                    size='small'
+                    className="coin-table"
+                    columns={columns}
+                    dataSource={ETHData}
+                    pagination={false}
+                    bordered={false}
+                    scroll={{ y: 300 }}
+                    onRow={(record) => {
+                      return {
+                        onClick: () => {
+                          browserHistory.push(record.coin.toLowerCase())
+                        },
+                      }
+                    }}
+                  />
                 </TabPane>
                 <TabPane tab="EOS" key='eos'>
                   EOS
@@ -105,3 +152,25 @@ export default class Assets extends React.Component<AssetsProps, AssetsState>{
     )
   }
 }
+
+function mapStateToProps(state: any) {
+  return {
+    lang: state.locales.get('lang'),
+    activeContracts: state.activeContracts,
+    // account: state.account,
+    // auth: state.auth,
+    // pathname: state.routing.locationBeforeTransitions.pathname,
+  };
+}
+
+
+function mapDispatchToProps(dispatch: any) {
+  return {
+    actions: bindActionCreators(Object.assign({}), dispatch),
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Assets);

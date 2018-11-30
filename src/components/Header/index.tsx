@@ -1,8 +1,11 @@
 import * as React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { FormattedMessage } from 'react-intl';
 import { Link } from 'react-router';
-import { Select, Menu, Icon, Popover, Input, Badge, Button } from 'antd';
+import { Select, Menu, Icon, Popover } from 'antd';
 import classNames from 'classnames';
+import * as AuthActions from '@/store/actions/auth';
 import { LeftNavigation, RightNavigation } from '@/constants/navigation';
 import './index.less'
 import logo from '@/assets/images/logo.png';
@@ -11,11 +14,11 @@ const Option = Select.Option;
 
 interface IHeaderProps {
     readonly location: any;
-    readonly hasAccount: boolean;
+    // readonly hasAccount: boolean;
     // logout: any;
     // account: string;
     // product?: string;
-    // showPopup: () => void;
+    readonly showLoginPopup: () => void;
     // showRegisterPopup: any;
     // isHome: boolean;
 }
@@ -27,22 +30,12 @@ interface IHeaderState {
 }
 
 class Header extends React.Component<IHeaderProps, IHeaderState> {
-    constructor(props: IHeaderProps, context: any) {
+     constructor(props: IHeaderProps, context: any) {
         super(props, context);
         this.state = {
           menuVisible: false,
         };
-    }
-      // static contextTypes = {
-      //   router: PropTypes.object.isRequired,
-      //   intl: PropTypes.object.isRequired,
-      //   isMobile: PropTypes.bool.isRequired,
-      // }
-
-      componentDidMount() {
-        const { intl, router } = this.context;
-        console.log('context:', this.context)
-      }
+     }
 
       handleShowMenu = () => {
         this.setState({
@@ -56,7 +49,7 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
         });
       }
 
-      onMenuVisibleChange = (visible) => {
+      onMenuVisibleChange = (visible: boolean) => {
         this.setState({
           menuVisible: visible,
         });
@@ -70,7 +63,8 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
 
       public render() {
         const { menuVisible } = this.state;
-        const { hasAccount } = this.props;
+        const { account } = this.props;
+        const hasAccount = !!account.get('mobile');
         // const { isMobile } = this.context;
         const isMobile = false;
         const menuMode = isMobile ? 'inline' : 'horizontal';
@@ -102,16 +96,24 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
           </Select>,
           <Menu className="menu-site" mode={menuMode} selectedKeys={[activeMenuItem]} id="nav" key="nav">
             {
-              RightNavigation.map((item: any, i: number) => {
-                if (hasAccount && (item.id === 'signup' || item.id === 'login')) {
-                    return null;
+              RightNavigation.map((item: any) => {
+                if (hasAccount && (item.id === 'signin')) {
+                    return (
+                      <Menu.Item key={item.id} id={item.id}>
+                          <Link to={''}>
+                              {account.mobile}
+                          </Link>
+                      </Menu.Item>
+                    );
+                } else if (item.id === 'signin' || item.id === 'signup') {
+                  return (
+                    <Menu.Item key={item.id} onClick={this.props.showLoginPopup}>
+                      <Link to={''}>
+                        <FormattedMessage id={item.message} />
+                      </Link>
+                    </Menu.Item>)
                 }
-                return (!!item.link ?
-                  <Menu.Item key={item.id}>
-                    <Link to={item.link}>
-                      <FormattedMessage id={item.message} />
-                    </Link>
-                  </Menu.Item> :
+                return (
                   <Menu.Item key={item.id} id={item.id}>
                       <Link to={item.link}>
                           <FormattedMessage id={item.message} />
@@ -123,7 +125,6 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
           </Menu>,
         ];
 
-        const searchPlaceholder = locale === 'zh-CN' ? '在 ant.design 中搜索' : 'Search in ant.design';
         return (
           <header id="header" className={headerClassName}>
             {isMobile && (
@@ -150,9 +151,9 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
                 </Link>
                 <Menu className="menu-site" mode={menuMode} selectedKeys={[activeMenuItem]} id="left-nav" key="nav">
                   {
-                    LeftNavigation.map((item: any, i: number) => {
+                    LeftNavigation.map((item: any) => {
                       if (hasAccount && (item.id === 'signup' || item.id === 'login')) {
-                          return null;
+                          return <span key={item.id}></span>;
                       }
                       return (!!item.link ?
                         <Menu.Item key={item.id}>
@@ -179,4 +180,22 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
       }
 }
 
-export default Header;
+function mapStateToProps(state: any) {
+  return {
+    socket: state.socket,
+    lang: state.locales.get('lang'),
+    account: state.account,
+  };
+}
+
+
+function mapDispatchToProps(dispatch: any) {
+  return {
+    actions: bindActionCreators(Object.assign({}, AuthActions), dispatch),
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Header);

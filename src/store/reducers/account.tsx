@@ -1,45 +1,45 @@
-import { Map } from 'immutable';
-import * as Immutable from 'immutable';
+import { Record } from 'immutable';
+import { setToken } from '@/utils/token';
+import global from  '@/constants/config'
 
 export interface AccountAction {
     payload: {
-        account_key: string,
-        id: number,
+        key: string,
+        account: string,
+        jwt: string,
         mobile: string,
     };
     type: string;
 };
 
-export class AccountState extends Immutable.Record({
-  accountKey: null,
-  accountID: null,
-  mobile: null,
+
+export class AccountState extends Record({
+  accountKey: '',
+  accountID: '',
+  mobile: '',
 }) {
-  accountKey: number;
-  accountID: number;
+  accountKey: string;
+  accountID: string;
   mobile: string;
 }
 
-
 const initialState = new (AccountState);
 
-export default function account(state: AccountState = initialState, action: AccountAction){
+export default function accountReducer(state:AccountState = initialState, action: AccountAction){
     switch (action.type) {
         case 'get account info success':
-            // spotAccountKey = action.payload.account_key;
-            // spotAccountID = action.payload.id;
-            return state.update('accountKey', v => action.payload.account_key)
-                        .update('accountID', v => action.payload.id)
-                        .update('mobile', v => action.payload.mobile);
-        case 'get account info failed':
-            console.error('get account info failed');
-            return state;
+            global.AccountKey = action.payload.key;
+            global.AccountID = action.payload.account;
+            setToken(action.payload.jwt);
+            return state.set('accountKey', action.payload.key)
+                        .set('accountID', action.payload.account)
+                        .set('mobile', action.payload.mobile);
         case 'logout requested':
-            // spotAccountKey = null;
-            // spotAccountID = null;
-            return state.update('accountKey', v => null)
-                        .update('accountID', v => null)
-                        .update('mobile', v => null);
+            global.AccountKey = '';
+            global.AccountID = '';
+            return state.set('accountKey', '')
+                        .set('accountID', '')
+                        .set('mobile', '');
         default:
             return state;
     }

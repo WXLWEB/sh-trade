@@ -1,5 +1,3 @@
-import env from './env/index';
-
 interface INavigation {
   id: string;
   message: string;
@@ -58,19 +56,9 @@ export const RightNavigation: INavigations = [
         message: 'header_navigation_message_orders',
         link: `/`,
         list: [],
-    },  {
-        id: 'account',
-        message: 'header_navigation_message_account',
-        link: `/`,
-        list: [],
-    },  {
-        id: 'sign',
+    }, {
+        id: 'signin',
         message: 'header_navigation_message_signin',
-        link: `/`,
-        list: [],
-    },  {
-        id: 'register',
-        message: 'header_navigation_message_sign_up',
         link: `/`,
         list: [],
     }

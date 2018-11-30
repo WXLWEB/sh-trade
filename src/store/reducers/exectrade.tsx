@@ -1,8 +1,8 @@
 import * as Immutable from 'immutable';
 import { List } from 'immutable';
-import * as _ from 'lodash';
+import isEmpty from 'lodash.isempty';
 
-export class IExecTrade extends Immutable.Record({
+export class ExectradeState extends Immutable.Record({
     Trades: Immutable.List([{
       ShortTime: '-',
       Price:  '-',
@@ -15,7 +15,7 @@ export class IExecTrade extends Immutable.Record({
 }
 
 
-export interface IExectradeAction {
+export interface ExectradeAction {
     payload: {
       Trades: any;
       Timestamp: string;
@@ -27,12 +27,12 @@ export interface IExectradeAction {
     type: string;
 };
 
-const initialState = new(IExecTrade);
+const initialState = new(ExectradeState);
 
-export default function exectrade(state: IExecTrade = initialState, action: IExectradeAction): any {
+export default function exectradeReducer(state: ExectradeState = initialState, action: ExectradeAction): any {
     switch (action.type) {
         case 'get trades response':
-          if (_.isEmpty(action.payload.Trades)) {
+          if (isEmpty(action.payload.Trades)) {
             return state.set('Trades', Immutable.List([{
               ShortTime: '-',
               Price:  '-',
@@ -41,7 +41,7 @@ export default function exectrade(state: IExecTrade = initialState, action: IExe
               Symbol: '-',
             }]));
           }
-          const newState = action.payload.Trades.map(trade => {
+          const newState = action.payload.Trades.map((trade: any) => {
             return {ShortTime: trade.Timestamp, Price: trade.Price, Quantity: trade.Size, Side: trade.Side, Symbol: trade.Symbol};
           });
           return state.set('Trades', List(newState));

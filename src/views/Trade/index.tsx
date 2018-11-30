@@ -1,16 +1,13 @@
 import * as React from 'react';
 import { Link } from 'react-router';
 import { Form, Input, Button, Row, Col, Slider } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
+import { call } from 'redux-saga/effects';
 import Box from '@/components/Box';
 import './index.less';
 
 const FormItem = Form.Item;
 
-interface TradeProps extends FormComponentProps {
-  age: number;
-  name: string;
-}
+export type TradeProps = Readonly<any>
 export type TradeState = Readonly<any>;
 
 export default class Trade extends React.Component<TradeProps, TradeState>{

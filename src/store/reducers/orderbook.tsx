@@ -1,14 +1,13 @@
-import * as Immutable from 'immutable';
+import { List, Record } from 'immutable';
 import { accAdd, accSub, accMul } from '@/utils/calculate';
-// import * as _ from '@/utils/sortOrderbook';
 
-export class IOrderbook extends Immutable.Record({
-    AskData: Immutable.List([]),
-    BidData: Immutable.List([]),
-    AskDataWithDepth: Immutable.List([]),
-    BidDataWithDepth: Immutable.List([]),
-    BidDepth: Immutable.List([]),
-    AskDepth: Immutable.List([]),
+export class OrderbookState extends Record({
+    AskData: List([]),
+    BidData: List([]),
+    AskDataWithDepth: List([]),
+    BidDataWithDepth: List([]),
+    BidDepth: List([]),
+    AskDepth: List([]),
     Version: 0,
     Depth: 0,
 }) {
@@ -21,21 +20,25 @@ export class IOrderbook extends Immutable.Record({
 }
 
 
-export interface IOrderbookAction {
+export interface OrderbookAction {
     payload: any;
     type: string;
 };
 
-const initialState = new(IOrderbook);
+const initialState = new(OrderbookState);
 
 const OrderBookItemLength = 200;
 
-const sortFullOrderBook = (data) => {
-  let obj;
+const sortFullOrderBook = (data: any) => {
+  let obj = {
+    Version: '',
+    askData: List([]),
+    bidData: List([])
+  };
   if (data.Type === 'F') {
     obj.Version = data.Version;
-    obj.askData = Immutable.List([]);
-    obj.bidData = Immutable.List([]);
+    obj.askData = List([]);
+    obj.bidData = List([]);
     data.List.forEach((id) => {
       if (id.Side === '1') {
         obj.bidData = obj.bidData.push({ Price: id.Price, Quantity: id.Size });
@@ -107,7 +110,7 @@ export const sortIncrementalOrderBook = (data, oldOrderbook) => {
 };
 
 export const sortOrderBookWithDepth = (dataArr?: any, count?: number, side = 1, depth?: number) => {
-  let orderArr = Immutable.List([]);
+  let orderArr = List([]);
   let minAmount = 0;
   let totalAmount = 0;
   let totalPrice = 0;
@@ -168,7 +171,7 @@ export const getMaketDepth = (dataArr?: any, count?: number) => {
   return orderArr;
 };
 
-export default function orderbook(state: IOrderbook = initialState, action: IOrderbookAction): any {
+export default function orderbookReducer(state: OrderbookState = initialState, action: OrderbookAction): any {
     switch (action.type) {
         case 'get full orderbook':
           const data = sortFullOrderBook(action.payload);
@@ -207,8 +210,8 @@ export default function orderbook(state: IOrderbook = initialState, action: IOrd
           };
           break;
         case 'get market depth chart':
-          let bidDepth1 = Immutable.List([]);
-          let askDepth1 = Immutable.List([]);
+          let bidDepth1 = List([]);
+          let askDepth1 = List([]);
           // if (!!state.get('BidData')) {
           //   bidDepth1 = getMaketDepth(state.get('BidData'), showOrderBookLength);
           // }
