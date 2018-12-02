@@ -31,6 +31,7 @@ const columns: ColumnProps<IOrderbook>[] = [{
 
 interface OrderbookProps {
   orderbook: any;
+  ticker: any;
 }
 export type OrderbookState = Readonly<any>;
 const OrderBookItemLength = 20;
@@ -60,12 +61,11 @@ class Orderbook extends React.Component<OrderbookProps, OrderbookState>{
   }
 
   public render(){
-    const { orderbook } = this.props;
+    const { orderbook, ticker } = this.props;
     const askSize = orderbook.get('BidList').size;
     const bidSize = orderbook.get('BidList').size;
-    const BidList = orderbook.get('BidList').toJS().concat(getEmptyArray(bidSize)).reverse();
-    const AskList = orderbook.get('AskList').toJS().concat(getEmptyArray(askSize));
-    console.log('getEmptyArray:', getEmptyArray(askSize));
+    const BidList = orderbook.get('BidList').toJS().concat(getEmptyArray(bidSize)).slice(0,6).reverse();
+    const AskList = orderbook.get('AskList').toJS().concat(getEmptyArray(askSize)).slice(0,6);
     return(
       <div className="orderbook">
         <Box
@@ -89,7 +89,7 @@ class Orderbook extends React.Component<OrderbookProps, OrderbookState>{
                   rowKey={(_, index: number) => {return index.toString()}}
                   />
                 <div className="new-price">
-                  <div>4,12341</div>
+                  <div>{ticker.get("LastPrice")}</div>
                   <div>¥ 3213</div>
                 </div>
                 <Table
@@ -115,6 +115,7 @@ class Orderbook extends React.Component<OrderbookProps, OrderbookState>{
 function mapStateToProps(state: any) {
   return {
     orderbook: state.orderbook,
+    ticker: state.ticker,
   };
 }
 export default connect(
