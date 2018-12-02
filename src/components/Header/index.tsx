@@ -17,6 +17,8 @@ const Option = Select.Option;
 interface IHeaderProps {
     readonly location: any;
     readonly actions: any;
+    readonly lang: string;
+    readonly account: any;
     readonly showLoginPopup: () => void;
 }
 interface IHeaderState {
@@ -59,7 +61,7 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
 
       public render() {
         const { menuVisible } = this.state;
-        const { account } = this.props;
+        const { account, lang } = this.props;
         const hasAccount = !!account.get('mobile');
         // const { isMobile } = this.context;
         const isMobile = false;
@@ -69,20 +71,13 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
         } = this.props;
         const module = location.pathname.replace(/(^\/|\/$)/g, '').split('/').slice(0, -1).join('/');
         let activeMenuItem = module || 'home';
-        if (activeMenuItem === 'components' || location.pathname === 'changelog') {
-          activeMenuItem = 'docs/react';
-        }
-        // const { intl: { locale } } = this.context;
-        const locale = 'zh-CN';
-        const isZhCN = true;
-
         const headerClassName = classNames({
           clearfix: true,
         });
 
         const menu = [
           <Select
-            defaultValue="简体中文"
+            value={lang}
             suffixIcon={<Icon type="caret-down" />}
             className="header-lang-button"
             style={{ width: 100 }}
