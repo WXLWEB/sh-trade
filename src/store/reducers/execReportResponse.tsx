@@ -1,39 +1,46 @@
-import { Map, List } from 'immutable';
-import * as Immutable from 'immutable';
-import * as _ from 'lodash';
+import { Map, List, Record } from 'immutable';
+import isEmpty from 'lodash.isempty';
+import sumBy from 'lodash.sumby';
+import sum from 'lodash.sum';
+import get from 'lodash.get';
+import last from 'lodash.last';
+import orderBy from 'lodash.orderby';
+import isUndefined from 'lodash.isundefined';
 import { accSub, accMul } from '@/utils/calculate';
 
-export interface IExecReportResponseAction {
-    payload: any;
+export interface ExecReportResponseAction {
+    payload: {
+        RC: string;
+    };
     type: string;
 };
 
-export class IExecReportResponse extends Immutable.Record({
+export class ExecReportResponseState extends Record({
     newPosition: false,
-    pendingOrders: Immutable.List([{ 'Time': '-', 'Symbol': '-', 'CumQty': '-', 'Total': '-', 'Price': '-', 'Type': '-', 'Side': '-', 'OID': '-'}]),
-    pendingSort: Immutable.Map({key: 'Time', order: 'desc'}),
-    OCOPendingOrders: Immutable.List([]),
-    closedOrders: Immutable.List([{ 'Time': '-', 'Symbol': '-', 'Type': '-', 'Side': '-', 'Quantity': '-', 'Avg.Price': '-', 'Status': '-'}]),
-    closedSort: Immutable.Map({key: 'Time', order: 'desc'}),
-    positionDetails: Immutable.List([{ 'Time': '-', 'Positions': '-', 'Price': '-', 'Profit': '-'}]),
-    positionSort: Immutable.Map({key: 'Time', order: 'desc'}),
-    oldExecReportData: Immutable.List([]),
+    pendingOrders: List([{ 'Time': '-', 'Symbol': '-', 'CumQty': '-', 'Total': '-', 'Price': '-', 'Type': '-', 'Side': '-', 'OID': '-'}]),
+    pendingSort: Map({key: 'Time', order: 'desc'}),
+    OCOPendingOrders: List([]),
+    closedOrders: List([{ 'Time': '-', 'Symbol': '-', 'Type': '-', 'Side': '-', 'Quantity': '-', 'AvgPrice': '-', 'Status': '-'}]),
+    closedSort: Map({key: 'Time', order: 'desc'}),
+    positionDetails: List([{ 'Time': '-', 'Positions': '-', 'Price': '-', 'Profit': '-'}]),
+    positionSort: Map({key: 'Time', order: 'desc'}),
+    oldExecReportData: List([]),
 }) {
     newPosition: boolean;
-    pendingSort: any;
-    pendingOrders: any;
-    OCOPendingOrders: any;
-    closedOrders: any;
-    closedSort: any;
-    positionDetails: any;
-    oldExecReportData: any;
+    pendingSort: Map<>;
+    pendingOrders: List<>;
+    OCOPendingOrders: List<>;
+    closedOrders: List<>;
+    closedSort: Map<>;
+    positionDetails: List<>;
+    oldExecReportData: List<>;
 }
 
-const initialState = new (IExecReportResponse);
-let newState = initialState;
-let pendingObj:any = Map();
-let closedObj:any = Map();
-let positionObj:any = Map();
+const initialState = new (ExecReportResponseState);
+const newState = initialState;
+const pendingObj = Map();
+const closedObj = Map();
+const positionObj = Map();
 
 let Ticker = {
   AskPrice: '-',
@@ -60,7 +67,7 @@ const dealExecutionsOrder = (report) => {
     'Type': report.OrderType,
     'Side': report.Side,
     'Quantity': report.CumQty,
-    'Avg.Price': report.UserAveragePrice,
+    'AvgPrice': report.UserAveragePrice,
     'Status': report.Status,
   };
 };
@@ -75,24 +82,24 @@ const dealPositionsOrder = (order) => {
 };
 
 const getUserAveragePrice = (exec) => {
-  if ( _.isEmpty(exec.ExecutionDetails)) {
+  if ( isEmpty(exec.ExecutionDetails)) {
     return exec.Price;
   }
-  const orderQuantity = _.sumBy(exec.ExecutionDetails, 'TotalQuantity');
+  const orderQuantity = sumBy(exec.ExecutionDetails, 'TotalQuantity');
   const averagePerExec = exec.ExecutionDetails.map(detail => {
     const weight = detail.TotalQuantity / orderQuantity;
     return weight * detail.Price;
   });
-  const UserAveragePrice = _.sum(averagePerExec);
+  const UserAveragePrice = sum(averagePerExec);
   return UserAveragePrice;
 };
 
 const getExecutionTimeStamp = (exec) => {
-  const details = _.get(exec, 'ExecutionDetails', []);
-  if ( _.isEmpty(details)) {
+  const details = get(exec, 'ExecutionDetails', []);
+  if ( isEmpty(details)) {
     return exec.Timestamp;
   }else {
-    const ExecutionTimeStamp = _.get(_.last(details), 'Timestamp');
+    const ExecutionTimeStamp = get(last(details), 'Timestamp');
     return ExecutionTimeStamp;
   }
 };
@@ -111,7 +118,7 @@ const dealExecReport = (state, report) => {
       newState = newState.update('OCOPendingOrders', v =>  pendingObj.toList());
     }else {
       pendingObj = pendingObj.set(report.OID, dealPendingOrder(report));
-      newState = newState.update('pendingOrders', v =>  List(_.orderBy(pendingObj.toList().toJSON(), [state.get('pendingSort').get('key')], [state.get('pendingSort').get('order')])));
+      newState = newState.update('pendingOrders', v =>  List(orderBy(pendingObj.toList().toJSON(), [state.get('pendingSort').get('key')], [state.get('pendingSort').get('order')])));
     }
   }
 
@@ -124,7 +131,7 @@ const dealExecReport = (state, report) => {
       if (pendingObj.size === 0 ) {
         newState = newState.update('pendingOrders', v =>  List([{ 'Time': '-', 'Symbol': '-', 'CumQty': '-', 'Total': '-', 'Price': '-', 'Type': '-', 'Side': '-', 'OID': '-'}]));
       }else {
-        newState = newState.update('pendingOrders', v =>  List(_.orderBy(pendingObj.toList().toJSON(), [state.get('pendingSort').get('key')], [state.get('pendingSort').get('order')])));
+        newState = newState.update('pendingOrders', v =>  List(orderBy(pendingObj.toList().toJSON(), [state.get('pendingSort').get('key')], [state.get('pendingSort').get('order')])));
       }
     }
   }
@@ -134,9 +141,9 @@ const dealExecReport = (state, report) => {
     report.UserAveragePrice = getUserAveragePrice(report);
     closedObj  = closedObj.set(report.OID, dealExecutionsOrder(report));
     if (closedObj.size === 0) {
-      newState = newState.update('closedOrders', v => List([{ 'Time': '-', 'Symbol': '-', 'Type': '-', 'Side': '-', 'Quantity': '-', 'Avg.Price': '-', 'Status': '-'}]));
+      newState = newState.update('closedOrders', v => List([{ 'Time': '-', 'Symbol': '-', 'Type': '-', 'Side': '-', 'Quantity': '-', 'AvgPrice': '-', 'Status': '-'}]));
     }else {
-      newState = newState.update('closedOrders', v => List(_.orderBy(closedObj.toList().toJSON(), [state.get('closedSort').get('key')], [state.get('closedSort').get('order')])));
+      newState = newState.update('closedOrders', v => List(orderBy(closedObj.toList().toJSON(), [state.get('closedSort').get('key')], [state.get('closedSort').get('order')])));
     }
   }
 
@@ -154,7 +161,7 @@ const dealExecReport = (state, report) => {
         if (positionObj.size === 0) {
           newState = newState.update('positionDetails', v => List([{ 'Time': '-', 'Positions': '-', 'Price': '-', 'Profit': '-'}]));
         }else {
-          newState = newState.update('positionDetails', v => List(_.orderBy(positionObj.toList().toJSON(), [state.get('positionSort').get('key')], [state.get('positionSort').get('order')])));
+          newState = newState.update('positionDetails', v => List(orderBy(positionObj.toList().toJSON(), [state.get('positionSort').get('key')], [state.get('positionSort').get('order')])));
         }
       }
     });
@@ -172,13 +179,13 @@ const updatePositionsProfit = (state, Ticker) => {
 };
 
 
-export default function execReportResponse(state: IExecReportResponse = initialState, action: IExecReportResponseAction) {
+export default function execReportResponseReducer(state: ExecReportResponseState = initialState, action: ExecReportResponseAction) {
   switch (action.type) {
     case 'exec report order response array':
       action.payload.forEach(report => {
           newState = dealExecReport(state, report);
       });
-      if (_.isUndefined(newState)) {
+      if (isUndefined(newState)) {
         return state;
       }
       return newState;
@@ -200,13 +207,13 @@ export default function execReportResponse(state: IExecReportResponse = initialS
       }
       break;
     case 'order pending orders':
-      return state.update('pendingOrders', v => List(_.orderBy(state.get('pendingOrders').toJSON(), [action.payload.key], [action.payload.order])))
+      return state.update('pendingOrders', v => List(orderBy(state.get('pendingOrders').toJSON(), [action.payload.key], [action.payload.order])))
                   .update('pendingSort', v => Map({key: action.payload.key, order: action.payload.order}));
     case 'order closed orders':
-      return state.update('closedOrders', v => List(_.orderBy(state.get('closedOrders').toJSON(), [action.payload.key], [action.payload.order])))
+      return state.update('closedOrders', v => List(orderBy(state.get('closedOrders').toJSON(), [action.payload.key], [action.payload.order])))
                   .update('closedSort', v => Map({key: action.payload.key, order: action.payload.order}));
     case 'order position orders':
-      return state.update('positionDetails', v => List(_.orderBy(state.get('positionDetails').toJSON(), [action.payload.key], [action.payload.order])))
+      return state.update('positionDetails', v => List(orderBy(state.get('positionDetails').toJSON(), [action.payload.key], [action.payload.order])))
                   .update('positionSort', v => Map({key: action.payload.key, order: action.payload.order}));
     case 'clear account info':
       newState = initialState;
@@ -215,14 +222,14 @@ export default function execReportResponse(state: IExecReportResponse = initialS
       positionObj = Map();
       return Map({
         newPosition: false,
-        pendingOrders: Immutable.List([{ 'Time': '-', 'Symbol': '-', 'CumQty': '-',  'Total': '-', 'Price': '-', 'Type': '-', 'Side': '-', 'OID': '-'}]),
-        pendingSort: Immutable.Map({key: 'Time', order: 'desc'}),
-        OCOPendingOrders: Immutable.List([]),
-        closedOrders: Immutable.List([{ 'Time': '-',  'Symbol': '-', 'Type': '-', 'Side': '-', 'Quantity': '-', 'Avg.Price': '-', 'Status': '-'}]),
-        closedSort: Immutable.Map({key: 'Time', order: 'desc'}),
-        positionDetails: Immutable.List([{ 'Time': '-', 'Positions': '-', 'Price': '-', 'Profit': '-'}]),
-        positionSort: Immutable.Map({key: 'Time', order: 'desc'}),
-        oldExecReportData: Immutable.List([]),
+        pendingOrders: List([{ 'Time': '-', 'Symbol': '-', 'CumQty': '-',  'Total': '-', 'Price': '-', 'Type': '-', 'Side': '-', 'OID': '-'}]),
+        pendingSort: Map({key: 'Time', order: 'desc'}),
+        OCOPendingOrders: List([]),
+        closedOrders: List([{ 'Time': '-',  'Symbol': '-', 'Type': '-', 'Side': '-', 'Quantity': '-', 'AvgPrice': '-', 'Status': '-'}]),
+        closedSort: Map({key: 'Time', order: 'desc'}),
+        positionDetails: List([{ 'Time': '-', 'Positions': '-', 'Price': '-', 'Profit': '-'}]),
+        positionSort: Map({key: 'Time', order: 'desc'}),
+        oldExecReportData: List([]),
       });
     default:
       return state;

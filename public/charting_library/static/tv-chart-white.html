@@ -63064,11 +63064,11 @@
                         $('<td class="symbol-edit-popup-td desc apply-overflow-title">').html(q.test(a.symbol) ? a.description : a.description.replace(q,
                             "<strong>$&</strong>")).appendTo(b);
                         if(a.platform !==''){
-                            $('<td class="symbol-edit-popup-td type apply-overflow-title">').append('BTCC&nbsp;<span>'+a.platform+'</span>&nbsp;Exchange').appendTo(b);   
+                            $('<td class="symbol-edit-popup-td type apply-overflow-title">').append('BTCC&nbsp;<span>'+a.platform+'</span>&nbsp;Exchange').appendTo(b);
                         }else{
-                            $('<td class="symbol-edit-popup-td type apply-overflow-title">').appendTo(b);  
+                            $('<td class="symbol-edit-popup-td type apply-overflow-title">').appendTo(b);
                         }
-                        
+
                         $('<td class="symbol-edit-popup-td type apply-overflow-title">').append(a.property).appendTo(b);
                         // c = $('<td class="symbol-edit-popup-td type apply-overflow-title">').appendTo(b);
                         // "undefined" != typeof a.params && ~a.params.indexOf("eod") && ($("<i>").text("eod").addClass("eod").prependTo(c), c.append("&nbsp;"));
@@ -79293,9 +79293,6 @@
         var f = JSON.parse(urlParams.favorites);
         f.intervals = f.intervals.map(function(k) {
             var l = ("" + k);
-            if (l.match(/1[DWMYdwmy]/)) {
-                l = l.slice(1)
-            }
             return l
         });
         studyTemplates = new A65({

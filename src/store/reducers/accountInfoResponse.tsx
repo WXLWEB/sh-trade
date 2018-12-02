@@ -1,123 +1,83 @@
-import { Map } from 'immutable';
-import * as Immutable from 'immutable';
-import { accSub, accMul, accAdd } from '@/utils/calculate';
-import { getCoin, getCurrency } from '@/utils/symbol';
-import * as _ from 'lodash';
+import { Record, Map } from 'immutable';
+import sumBy from 'lodash.sumby';
+import filter from 'lodash.filter';
+import { accSub } from '@/utils/calculate';
+import Currency from '@/constants/currency';
 
-export interface IAccountInfoResponseAction {
-    payload: {
-        total: number,
-        avail: number,
-        positions: number,
-        Account: string,
-    };
-    type: string;
-};
+const balanceArr = Currency.map(item => {
+  return {
+    currency: item,
+    available: '-',
+    frozen: '-',
+    total: '-',
+  };
+});
 
-export class IAccountInfoResponse extends Immutable.Record({
-  Account: '',
-  BL: [],
-  CDL: [],
-}) {
-  total: number;
-  avail: number;
-  positions: number;
+const AccountInfoResponseRecord = Record({
+  balanceArr: balanceArr,
+  chiefBalance: '-',
+  total: '-'
+});
+
+export class AccountInfoResponseState extends AccountInfoResponseRecord {
+  balanceArr: any;
+  chiefBalance: any;
+  main: any;
+  total: any;
 }
 
+const initialState = new AccountInfoResponseState();
 
-const initialState = new (IAccountInfoResponse);
+export interface AccountInfoResponseAction {
+  payload: {
+    BL: any[];
+    CDL: any[];
+  }
+  type: string;
+}
 
-const getCash = (currency : string, accountInfo : any) => {
-  var cash = _.sumBy(_.filter(accountInfo.BL, function(o: any) {
+const getTotal = (currency : string, accountInfo : any) => {
+  var cash = sumBy(filter(accountInfo.BL, function(o: any) {
     return o.CR === currency;
-  }), 'C');
+  }), 'B');
   return cash;
 };
 
-const getCurrencyFromSymbol = (symbol: string, isQuote : boolean) => {
- if (isQuote) {
-   return getCurrency(symbol);
- }else {
-   return getCoin(symbol);
- }
+const getForzen = (currency : string, accountInfo: any) => {
+  var cash = sumBy(filter(accountInfo.BL, function(o: any) {
+    return o.CR === currency;
+  }), 'F');
+  return cash;
 };
 
-const getInitialMarginByCurrency = (currency : string, positions: any) => {
-  let sum = 0;
-  _.forEach(positions, function(o : any) {
-   if (getCurrencyFromSymbol(o.S, true) === currency) {
-     sum = accAdd(o.quoteInitialMargin, sum);
-   } else if (getCurrencyFromSymbol(o.S, false) === currency) {
-     sum = accAdd(o.baseInitialMargin, sum);
-   }
+const getAccountInfo = (accountInfo: any, state: AccountInfoResponseState) => {
+  const balanceArr = state.get('balanceArr').map(item => {
+    const currency = item.currency;
+    const total = getTotal(currency, accountInfo);
+    const frozen = getForzen(currency, accountInfo);
+    return {
+      currency: item.currency,
+      available: accSub(total, frozen),
+      frozen: frozen,
+      total: total,
+    };
   });
-  return sum;
+  return state.set('balanceArr', balanceArr);
 };
 
 
-const getInitialMarginRequired = (initialMargin : number, profit : number, side : boolean, initialMarginFactor : number) => {
-  var volatileMargin = (side || profit >= 0) ? 0 : accMul(profit, initialMarginFactor);
-  return accSub(initialMargin, volatileMargin);
-};
-
-
-const updatePositions = (positions : any) => {
- positions = _.map(positions, function(position : any) {
-   position.quoteInitialMargin = getInitialMarginRequired(position.QIMR, position.totalProfit, position.OS >= 0, position.IMF);
-   position.baseInitialMargin = getInitialMarginRequired(position.BIMR, position.totalProfit, position.OS >= 0, position.IMF);
-   return position;
- });
-   return positions;
-};
-
-
-const getAccountInfo = (data) => {
-  const positions = updatePositions(data.CDL);
-  const total_cash = getCash('CNY', data);
-  const total_eth = getCash('ETH', data);
-  const total_bcc = getCash('BCC', data);
-  const frozen_cash = getInitialMarginByCurrency('CNY', positions);
-  const frozen_eth = getInitialMarginByCurrency('ETH', positions);
-  const frozen_bcc = getInitialMarginByCurrency('BCC', positions);
-  return Map({
-    total_cash: total_cash,
-    frozen_cash: frozen_cash,
-    available_cash: accSub(total_cash, frozen_cash),
-    ETH_BTC: {
-      total_coin: total_eth,
-      frozen_coin: frozen_eth,
-      available_coin: accSub(total_eth, frozen_eth),
-    },
-    BCC_BTC: {
-      total_coin: total_bcc,
-      frozen_coin: frozen_bcc,
-      available_coin: accSub(total_bcc, frozen_bcc),
-    },
-  });
-};
-
-export default function acccountInfoResponse(state: IAccountInfoResponse = initialState, action: IAccountInfoResponseAction) {
+export default function acccountInfoResponseReducer(state: AccountInfoResponseState = initialState, action: AccountInfoResponseAction) {
   switch (action.type) {
     case 'get accountinfo response':
-      const newState = getAccountInfo(action.payload);
+      const newState = getAccountInfo(action.payload, state);
       return newState;
-    case 'clear account info':
-      return Map({
-        total_cash: '-',
-        frozen_cash: '-',
-        available_cash: '-',
-        ETH_BTC: {
-          total_coin: '-',
-          frozen_coin: '-',
-          available_coin: '-',
-        },
-        BCC_BTC: {
-          total_coin: '-',
-          frozen_coin: '-',
-          available_coin: '-',
-        },
-        login: false,
-      });
+    case 'logout requested':
+      const newState = Map({
+        balanceArr: balanceArr,
+        chiefBalance: '-',
+        total: '-'
+      })
+      return newState;
     default:
       return state;
   }

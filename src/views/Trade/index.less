@@ -1,6 +1,24 @@
 .trade-form{
   padding: 0 24px;
   height: 100%;
+  .ant-form-explain{
+    text-align: left;
+    display: none;
+  }
+  .ant-btn-default{
+    background-color: #BEBEC1!important;
+    color:#1A1D2C!important;
+    &:hover,&:focus,&:active{
+      background-color: #BEBEC1;
+      color:#1A1D2C;
+    }
+  }
+  .ant-input-group .ant-input{
+    border-right: none;
+  }
+  .ant-input-group-addon{
+    background: none;
+  }
   .tip{
     display: flex;
     justify-content: space-between;
@@ -13,7 +31,7 @@
     }
   }
   &.ant-form-vertical .ant-form-item{
-    margin-bottom: 15px;
+    margin-bottom: 12px;
   }
   &>.ant-row{
     height: 100%;

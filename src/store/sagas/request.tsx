@@ -45,7 +45,7 @@ function* getOrdersRequest(parameter: any) {
 
 function* startSendPublicRequest(parameter: any) {
     yield put({ type: 'get quote request', payload: parameter.payload});
-    yield put({ type: 'get trades request', payload: {symbol: parameter.payload, count: '20'}});
+    yield put({ type: 'get trades request', payload: {symbol: parameter.payload, count: '15'}});
 }
 
 function* startSendPrivateRequest(parameter: any) {

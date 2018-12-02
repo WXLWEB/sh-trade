@@ -1,12 +1,11 @@
-import * as Immutable from 'immutable';
-import { List } from 'immutable';
-import isEmpty from 'lodash.isempty';
+import { List, Record } from 'immutable';
+import { handleActions } from 'redux-actions';
 
-export class ExectradeState extends Immutable.Record({
-    Trades: Immutable.List([{
-      ShortTime: '-',
+export class ExectradeState extends Record({
+    Trades: List([{
+      Timestamp: '-',
       Price:  '-',
-      Quantity: '-',
+      Size: '-',
       Side:   '-',
       Symbol: '-',
     }]),
@@ -14,10 +13,14 @@ export class ExectradeState extends Immutable.Record({
     Trades: any;
 }
 
-
-export interface ExectradeAction {
+export interface TradesResponseAction {
     payload: {
-      Trades: any;
+      Trades: any[];
+    };
+    type: string;
+};
+export interface TradeAction {
+    payload: {
       Timestamp: string;
       Price: string;
       Size: string;
@@ -27,28 +30,13 @@ export interface ExectradeAction {
     type: string;
 };
 
-const initialState = new(ExectradeState);
+const initialState = new (ExectradeState);
 
-export default function exectradeReducer(state: ExectradeState = initialState, action: ExectradeAction): any {
-    switch (action.type) {
-        case 'get trades response':
-          if (isEmpty(action.payload.Trades)) {
-            return state.set('Trades', Immutable.List([{
-              ShortTime: '-',
-              Price:  '-',
-              Quantity: '-',
-              Side:   '-',
-              Symbol: '-',
-            }]));
-          }
-          const newState = action.payload.Trades.map((trade: any) => {
-            return {ShortTime: trade.Timestamp, Price: trade.Price, Quantity: trade.Size, Side: trade.Side, Symbol: trade.Symbol};
-          });
-          return state.set('Trades', List(newState));
-        case 'get exectrade':
-          const newTrade = action.payload;
-          return state.update('Trades', v => state.get('Trades').unshift({ShortTime: newTrade.Timestamp, Price: newTrade.Price, Quantity: newTrade.Size, Side: newTrade.Side, Symbol: newTrade.Symbol}).slice(0, 10));
-        default:
-            return state;
-    }
-}
+export default handleActions({
+    'get trades response' (state: ExectradeState = initialState, action: TradesResponseAction) {
+      return state.set('Trades', List(action.payload.Trades));
+    },
+    'get exectrade' (state: ExectradeState = initialState, action: TradeAction) {
+      return state.update('Trades', v => v.splice(0, 0, action.payload).pop());
+    },
+}, initialState);

@@ -2,8 +2,8 @@ import { make } from 'react-lens';
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 
-make('thead', 'string', (content) => {
-  const data;
+make('thead', 'string', (content: string) => {
+  let data;
   switch (content) {
     case 'Time':
       data = <FormattedMessage id='prog_order_panel_time'></FormattedMessage>;

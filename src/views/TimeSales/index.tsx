@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 import { Table } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import Box from '@/components/Box';
-import Filter from '@/filter'
+import Filter from '@/Filter'
 import './index.less';
 
 interface ITimeSales {
-  ShortTime: number;
+  Timestamp: number;
   Price: number;
-  Quantity: number;
+  Size: number;
   Side: string;
   width?: number;
   render: () => void;
@@ -17,7 +17,7 @@ interface ITimeSales {
 
 const columns: ColumnProps<ITimeSales>[] = [{
   title: '时间',
-  dataIndex: 'ShortTime',
+  dataIndex: 'Timestamp',
   align: 'left',
   width: 60,
   render: (item) => (
@@ -35,7 +35,7 @@ const columns: ColumnProps<ITimeSales>[] = [{
   )
 }, {
   title: '数量',
-  dataIndex: 'Quantity',
+  dataIndex: 'Size',
   align: 'right',
 }];
 
@@ -59,6 +59,7 @@ class TimeSales extends React.Component<TimeSalesProps, TimeSalesState>{
             dataSource={data}
             pagination={false}
             bordered={false}
+            rowKey="ShortTime"
             />
         </Box>
       </div>

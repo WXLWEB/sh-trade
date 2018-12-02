@@ -16,10 +16,16 @@ import './shorttime.tsx';
 import './email.tsx';
 import './mobile.tsx';
 
-class Filter extends React.Component<any, any> {
+export interface FilterProps{
+  value: any;
+  keyname: string;
+  decimal?: number;
+}
+
+class Filter extends React.Component<FilterProps, any> {
 
   render() {
-    const { value , keyname } = this.props;
+    const { value , keyname, decimal } = this.props;
     return(
       <Lens filter={keyname}>{!!value ? value.toString() : '-' }</Lens>
     );

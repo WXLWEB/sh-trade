@@ -2,8 +2,8 @@ import { make } from 'react-lens';
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 
-make('orderstatus', 'string', (content, order) => {
-  const data;
+make('orderstatus', 'string', (content: string) => {
+  let data;
   switch (content) {
     case '0':
       data = <FormattedMessage id='quantum_order_status_new'></FormattedMessage>;

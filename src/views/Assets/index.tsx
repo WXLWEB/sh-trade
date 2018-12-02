@@ -2,8 +2,11 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
+import * as SocketActions from '@/store/actions/socket';
 import { Icon, Tabs, Input, Button, Table } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
+import findIndex from 'lodash.findindex'
+import global from '@/constants/config';
 import { ActiveContractsState } from '@/store/reducers/activeContracts';
 import Box from '@/components/Box';
 import './index.less';
@@ -14,10 +17,11 @@ const search = <Search
       onSearch={(value: any) => console.log(value)}
       style={{ height: '24px', width: '80px' }}
     />;
+
 interface ICoins {
-  title: string;
-  dataIndex: string;
-  align: string;
+  coin: string;
+  lastPrice: string;
+  percent: string;
   width?: number;
   render: () => void;
 }
@@ -27,6 +31,11 @@ const columns: ColumnProps<ICoins>[] = [{
   dataIndex: 'coin',
   align: 'left',
   width: 60,
+  render: (item) => (
+    <div className={item === global.CurrentSymbol ? 'active' : ''}>
+      {item}
+    </div>
+  )
 }, {
   title: '最新价',
   dataIndex: 'lastPrice',
@@ -43,18 +52,10 @@ const columns: ColumnProps<ICoins>[] = [{
   )
 }];
 
-// let data:any[] = [];
-// for (let i = 0; i < 10; i++) {
-//   data.push({
-//     key: i,
-//     coin: `BTC${i}`,
-//     lastPrice: 32,
-//     percent: `${i}%`,
-//   });
-// }
-
 interface AssetsProps {
   activeContracts: ActiveContractsState;
+  symbol: string;
+  actions: any;
 }
 export type AssetsState = Readonly<any>;
 
@@ -68,23 +69,46 @@ class Assets extends React.Component<AssetsProps, AssetsState>{
   }
 
   public render(){
-    const { activeContracts } = this.props;
-    const CNZData: any[] = activeContracts.contracts.CNZ.map((obj: any, i: number) => {
+    const activeKeyList = ['CNZ', 'ETH', 'EOS', 'Other'];
+    const { activeContracts, symbol, actions } = this.props;
+    const index = findIndex(activeKeyList, (coin: string) => {
+      return symbol.indexOf(coin) !== -1
+    })
+    const activeIndex = index >= 0 ? index : 0
+
+    let activeDataList: any[] = [];
+    activeDataList.push(activeContracts.contracts.CNZ.map((obj: any, i: number) => {
       return {
         key: i,
         coin: obj.Symbol,
         lastPrice: 32,
         percent: `${i}%`,
       }
-    })
-    const ETHData: any[] = activeContracts.contracts.ETH.map((obj: any, i: number) => {
+    }))
+    activeDataList.push(activeContracts.contracts.ETH.map((obj: any, i: number) => {
       return {
         key: i,
         coin: obj.Symbol,
         lastPrice: 32,
         percent: `${i}%`,
       }
-    })
+    }))
+    activeDataList.push(activeContracts.contracts.EOS.map((obj: any, i: number) => {
+      return {
+        key: i,
+        coin: obj.Symbol,
+        lastPrice: 32,
+        percent: `${i}%`,
+      }
+    }))
+    activeDataList.push(activeContracts.contracts.EOS.map((obj: any, i: number) => {
+      return {
+        key: i,
+        coin: obj.Symbol,
+        lastPrice: 32,
+        percent: `${i}%`,
+      }
+    }))
     const optional = <Button
       style={{ lineHeight: '32px', border: 'none', padding: '0', background: 'none' }}
       onClick={this.handleTabChange}
@@ -99,14 +123,52 @@ class Assets extends React.Component<AssetsProps, AssetsState>{
           extra={<Icon type="eye" style={{ fontSize: '14px'}}/>}
           >
           <Tabs className="tab1" tabBarExtraContent={search} size="small" tabBarGutter={0}>
-            <TabPane tab="主版" key="1">
-              <Tabs className="tab2" tabBarExtraContent={optional} size="small" tabBarGutter={0}>
-                <TabPane tab="CNZ" key='cnz'>
+            <TabPane tab="主版" key="1" >
+              <Tabs className="tab2" defaultActiveKey={activeKeyList[activeIndex]} tabBarExtraContent={optional} size="small" tabBarGutter={0}>
+                <TabPane tab="CNZ" key={activeKeyList[0]}>
                   <Table
                     size='small'
                     className="coin-table"
                     columns={columns}
-                    dataSource={CNZData}
+                    dataSource={activeDataList[0]}
+                    pagination={false}
+                    bordered={false}
+                    scroll={{ y: 300 }}
+                    onRow={(record) => {
+                      return {
+                        onClick: () => {
+                          browserHistory.push(record.coin.toLowerCase());
+                          actions.closeSocket();
+                        },
+                      }
+                    }}
+                  />
+                </TabPane>
+                <TabPane tab="ETH" key={activeKeyList[1]}>
+                  <Table
+                    size='small'
+                    className="coin-table"
+                    columns={columns}
+                    dataSource={activeDataList[1]}
+                    pagination={false}
+                    bordered={false}
+                    scroll={{ y: 300 }}
+                    onRow={(record) => {
+                      return {
+                        onClick: () => {
+                          browserHistory.push(record.coin.toLowerCase());
+                          actions.closeSocket();
+                        },
+                      }
+                    }}
+                  />
+                </TabPane>
+                <TabPane tab="EOS" key={activeKeyList[2]}>
+                  <Table
+                    size='small'
+                    className="coin-table"
+                    columns={columns}
+                    dataSource={activeDataList[2]}
                     pagination={false}
                     bordered={false}
                     scroll={{ y: 300 }}
@@ -119,28 +181,7 @@ class Assets extends React.Component<AssetsProps, AssetsState>{
                     }}
                   />
                 </TabPane>
-                <TabPane tab="ETH" key='eth'>
-                  <Table
-                    size='small'
-                    className="coin-table"
-                    columns={columns}
-                    dataSource={ETHData}
-                    pagination={false}
-                    bordered={false}
-                    scroll={{ y: 300 }}
-                    onRow={(record) => {
-                      return {
-                        onClick: () => {
-                          browserHistory.push(record.coin.toLowerCase())
-                        },
-                      }
-                    }}
-                  />
-                </TabPane>
-                <TabPane tab="EOS" key='eos'>
-                  EOS
-                </TabPane>
-                <TabPane tab=''>
+                <TabPane tab='' key='other'>
                   自选内容
                 </TabPane>
               </Tabs>
@@ -157,16 +198,13 @@ function mapStateToProps(state: any) {
   return {
     lang: state.locales.get('lang'),
     activeContracts: state.activeContracts,
-    // account: state.account,
-    // auth: state.auth,
-    // pathname: state.routing.locationBeforeTransitions.pathname,
   };
 }
 
 
 function mapDispatchToProps(dispatch: any) {
   return {
-    actions: bindActionCreators(Object.assign({}), dispatch),
+    actions: bindActionCreators(Object.assign({}, SocketActions), dispatch),
   };
 }
 

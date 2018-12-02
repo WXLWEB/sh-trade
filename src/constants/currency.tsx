@@ -1,13 +1,5 @@
 const Currency = [
-  {
-    currency: 'CNY',
-  },
-  {
-    currency: 'ETH',
-  },
-  {
-    currency: 'BCC',
-  },
+  'CNZ', 'ETH', 'EOS', 'BTC', 'BCH'
 ];
 
 export default Currency;

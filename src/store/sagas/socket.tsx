@@ -45,7 +45,7 @@ function* receiveMessages(actions: any) {
       }
       break;
     case 'OrderBook':
-      if (Symbol === params.Symbol) {
+      if (global.CurrentSymbol === params.Symbol) {
         const orderbooks = yield select((state: any) => state.orderbook);
         const oldVersion = orderbooks.get('Version');
         if (oldVersion + 1 !== params.Version || params.Version >= 32767) {
@@ -57,20 +57,22 @@ function* receiveMessages(actions: any) {
       }
       break;
     case 'GetTradesResponse':
-      yield put({type: 'get trades response', payload: params});
+      if(params.Trades.length > 0){
+        yield put({type: 'get trades response', payload: params});
+      }
       break;
     case 'Ticker':
-      if (Symbol === params.Symbol) {
+      if (global.CurrentSymbol === params.Symbol) {
         yield put({type: 'get symbol ticker', payload: params});
       }
       break;
-    case 'ExecTrade':
-      if (Symbol === params.Symbol) {
+    case 'Trade':
+      if (global.CurrentSymbol === params.Symbol) {
         yield put({type: 'get exectrade', payload: params});
       }
       break;
     case 'PremiumAdjustment':
-      if (Symbol === params.Symbol) {
+      if (global.CurrentSymbol === params.Symbol) {
         yield put({type: 'get premium adjustment', payload: params});
       }
       break;
@@ -81,8 +83,6 @@ function* receiveMessages(actions: any) {
       yield put({type: 'get accountinfo response', payload: params.AccountInfo});
       break;
     case 'PlaceOrderResponse':
-      yield put({type: 'reset feedback tips'});
-      yield put({type: 'reset feedback back'});
       yield put({type: 'place order response', payload: params});
       break;
     case 'CancelOrderResponse':
@@ -110,7 +110,7 @@ function* receiveMessages(actions: any) {
       yield put({type: 'accountinfo response', payload: params.AccountInfo});
       break;
     case 'Order':
-      if (Symbol === params.Symbol) {
+      if (global.CurrentSymbol === params.Symbol) {
         yield put({type: 'exec report order response', payload: params});
       }
       break;

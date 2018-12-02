@@ -1,10 +1,11 @@
-import { Map } from 'immutable';
-import * as Immutable from 'immutable';
-import * as _ from 'lodash';
-
+import { Record } from 'immutable';
+import { message } from 'antd';
+import * as React from 'react';
+import { FormattedMessage } from 'react-intl';
+import isUndefined from 'lodash.isundefined';
 let execReportData = {};
 
-export interface IFeedbackAction {
+export interface FeedbackAction {
     payload: {
         RC: string;
         OrdRejReason: number;
@@ -13,45 +14,17 @@ export interface IFeedbackAction {
     type: string;
 };
 
-export class IFeedback extends Immutable.Record({
+export class FeedbackState extends Record({
     execReportData: {},
-    tipSuccess: false,
-    tipFailed: false,
-    backSuccess: false,
-    successReason: Immutable.Map({
-      palced: false,
-      replaced: false,
-      canceled: false,
-    }),
-    backFailed: false,
-    error: false,
-    failedReason: Immutable.Map({
-        maxPositionReach: false,
-        insufficient: false,
-        incorrectQuantity: false,
-        otherError: false,
-        TooManyActiveQuotes: false,
-        ActiveQuoteStands: false,
-        InvalidSymbol: false,
-        NoActiveQuote: false,
-    }),
 }) {
-    tipSuccess: boolean;
-    tipFailed: boolean;
-    backSuccess: boolean;
-    successReason: any;
-    backFailed: boolean;
-    error: boolean;
-    failedReason: any;
+    execReportData: any;
 }
 
 const dealExecReportResponse = (newData) => {
-  console.log('oldData:', execReportData);
-  console.log('newData:', newData);
   const old = execReportData[newData.OID];
 
   // New Order Placed
-  if(_.isUndefined(old) && newData.Status == 'A'){
+  if(isUndefined(old) && newData.Status == 'A'){
     execReportData[newData.OID] = newData;
     return;
   };
@@ -76,9 +49,7 @@ const dealExecReportResponse = (newData) => {
 
   //Filled
   if (newData.LeaveQty == 0 && newData.CumQty > old.CumQty) {
-    // if($('#audio-execution').length !== 0) {
-    //    $('#audio-execution')[0].play();
-    //  }
+     message.success(<FormattedMessage id='quantum_buy_sell_success'/>, 20);
      execReportData[newData.OID] = newData;
     return;
   };
@@ -93,126 +64,62 @@ const dealExecReportResponse = (newData) => {
   };
 };
 
-const initialState = new (IFeedback);
+const initialState = new (FeedbackState);
 
-export default function feedback(state: IFeedback = initialState, action: IFeedbackAction) {
+const errorMessage = (code: number) => {
+  switch (code) {
+    case 109:
+      message.error("下单失败，未开放交易");
+      break;
+    case 110:
+      message.error("资金不足");
+      break;
+    case 13:
+      message.error("数量错误");
+      break;
+    default:
+      message.error("下单失败");
+      break;
+  }
+}
+
+export default function feedbackReducer(state: FeedbackState = initialState, action: FeedbackAction) {
   switch (action.type) {
     case 'place order response':
       if (action.payload.RC === '0') {
-        const successReason = {
-          palced: true,
-          replaced: false,
-          canceled: false,
-        };
-        return state.update('tipSuccess', v => true).update('successReason', v => Map(successReason)).update('backSuccess', v => true);
+        message.success('下单成功');
+        return state;
       } else {
-        let newState;
-        switch (action.payload.OrdRejReason) {
-          case 109:
-            newState = state.update('failedReason', v => v.set('maxPositionReach', true));
-            break;
-          case 110:
-            newState = state.update('failedReason', v => v.set('insufficient', true));
-            break;
-          case 13:
-            newState = state.update('failedReason', v => v.set('incorrectQuantity', true));
-            break;
-          default:
-            newState = state.update('failedReason', v => v.set('otherError', true));
-            break;
-        }
-        // if ($('#audio-failed').length !== 0 ) {
-        //   $('#audio-failed')[0].play();
-        // }
-        return newState.update('tipFailed', v => true)
-        .update('backFailed', v => true);
+        errorMessage(action.payload.OrdRejReason)
+        return state;
       };
       break;
     case 'cancel order response':
       if (action.payload.RC === '0') {
-        const successReason = {
-          palced: false,
-          replaced: false,
-          canceled: true,
-        };
-        return state.update('tipSuccess', v => true).update('successReason', v => Map(successReason)).update('backSuccess', v => true);
+        message.success("取消成功");
+        return state;
       }else {
-        let newState;
-        switch (action.payload.CxlRejReason) {
-          case 110:
-            newState = state.update('failedReason', v => v.set('insufficient', true));
-            break;
-          case 13:
-            newState = state.update('failedReason', v => v.set('incorrectQuantity', true));
-            break;
-          default:
-            newState = state.update('failedReason', v => v.set('otherError', true));
-            break;
-        }
-        // if ($('#audio-failed').length !== 0 ) {
-        //   $('#audio-failed')[0].play();
-        // }
-        return newState.update('tipFailed', v => true)
-        .update('backFailed', v => true);
+        errorMessage(action.payload.CxlRejReason)
+        return state;
       }
       break;
     case 'cancel replace order response':
       if (action.payload.RC === '0') {
-        const successReason = {
-          palced: false,
-          replaced: true,
-          canceled: false,
-        };
-        return state.update('tipSuccess', v => true).update('successReason', v => Map(successReason)).update('backSuccess', v => true);
+        message.success("替换成功");
+        return state;
       }else {
-        let newState;
-        switch (action.payload.CxlRejReason) {
-          case 110:
-            newState = state.update('failedReason', v => v.set('insufficient', true));
-            break;
-          case 13:
-            newState = state.update('failedReason', v => v.set('incorrectQuantity', true));
-            break;
-          default:
-            newState = state.update('failedReason', v => v.set('otherError', true));
-            break;
-        }
-        return newState.update('tipFailed', v => true)
-        .update('backFailed', v => true);
+        errorMessage(action.payload.CxlRejReason)
+        return state;
       }
       break;
-    case 'reset feedback tips':
-      return state.update('tipSuccess', v => false).update('tipFailed', v => false);
-    case 'reset feedback back':
-      return state.update('backSuccess', v => false)
-      .update('successReason', v => Map({
-        palced: false,
-        replaced: false,
-        canceled: false,
-      }))
-      .update('backFailed', v => false)
-      .update('failedReason', v => Map({
-        maxPositionReach: false,
-        insufficient: false,
-        incorrectQuantity: false,
-        otherError: false,
-        TooManyActiveQuotes: false,
-        ActiveQuoteStands: false,
-        InvalidSymbol: false,
-        NoActiveQuote: false,
-      }));
-    case 'set error to true':
-      return state.update('error', v => true);
-    case 'set error to false':
-      return state.update('error', v => false);
     case 'exec report order response':
       dealExecReportResponse(action.payload);
       return state;
-    // case 'exec report order response array':
-    //   action.payload.forEach(report => {
-    //       execReportData[report.OID] = report;
-    //   });
-    //   return state;
+      case 'exec report order response array':
+      action.payload.forEach((report: any) => {
+          execReportData[report.OID] = report;
+      });
+      return state;
     default:
       return state;
   }

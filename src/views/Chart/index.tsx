@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import 'charting_library/vendor/jquery.js';
 import 'charting_library/charting_library/charting_library.min.js';
 import 'charting_library/charting_library/datafeed/udf/datafeed.js';
 import Box from '@/components/Box';
 import env from '@/constants/env';
+import { getBuyUnit } from '@/utils/symbol';
 import './index.less';
 
 let chart:any = null;
@@ -15,39 +17,11 @@ interface ChartProps {
 }
 export type ChartState = Readonly<any>;
 
-export default class Chart extends React.Component<ChartProps, ChartState>{
+class Chart extends React.Component<ChartProps, ChartState>{
 
   generatorChart = () => {
      const lang = this.props.lang;
      const theme = this.props.theme;
-     const whiteTheme = {
-        'scalesProperties.lineColor' : '#E1E1E1',
-        'symbolWatermarkProperties.transparency': 90, //
-        'paneProperties.background': '#fff', // kline panel
-        'paneProperties.gridProperties.color': '#ccc',
-        'mainSeriesProperties.style': 1,
-        'mainSeriesProperties.areaStyle.color1': '#606090',
-        'mainSeriesProperties.areaStyle.color2': '#01F6F5',
-        'mainSeriesProperties.areaStyle.linecolor': '#0094FF',
-        // 'mainSeriesProperties.areaStyle.linestyle': CanvasEx.LINESTYLE_SOLID,
-        'mainSeriesProperties.areaStyle.linewidth': 1,
-        'mainSeriesProperties.areaStyle.priceSource': 'close',
-        'mainSeriesProperties.areaStyle.transparency': 50,
-     }
-     const blackTheme = {
-        "paneProperties.background": "#141414", // kline panel
-        "paneProperties.gridProperties.color": "#222",
-        "symbolWatermarkProperties.transparency": 90, //
-        "scalesProperties.textColor" : "#565A5D",
-        "scalesProperties.lineColor" : "#303030",
-        "scalesProperties.showLeftScale" : false,
-        "scalesProperties.showRightScale" : true,
-        "scalesProperties.backgroundColor" : "#141414",
-        "volumePaneSize": "large",
-        //  Candles styles
-        "mainSeriesProperties.candleStyle.upColor": "#28A631",
-        "mainSeriesProperties.candleStyle.downColor": "#BD2B35"
-     }
      chart = new TradingView.widget({
        width: '100%',
        height: '100%',
@@ -62,20 +36,57 @@ export default class Chart extends React.Component<ChartProps, ChartState>{
        library_path: '/charting_library/',
        locale: lang,
        drawings_access: {type: 'black', tools: [{name: 'Regression Trend'}]},
-       disabled_features: ['create_volume_indicator_by_default','left_toolbar',"link_to_tradingview","use_localstorage_for_settings",'control_bar','header_interval_dialog_button','show_interval_dialog_on_key_press', 'header_symbol_search','header_settings','header_indicators','header_compare','header_undo_redo','header_fullscreen_button','header_screenshot','timeframes_toolbar'],
+       disabled_features: [
+         'left_toolbar',
+         'link_to_tradingview',
+         'use_localstorage_for_settings',
+         'control_bar',
+         'header_chart_type',
+         // 'header_interval_dialog_button',
+         // 'show_interval_dialog_on_key_press',
+         'header_symbol_search',
+         'header_settings',
+         'header_indicators',
+         'header_compare',
+         'header_undo_redo',
+         'header_fullscreen_button',
+         'header_screenshot',
+         'timeframes_toolbar'
+       ],
        preset: 'mobile',
        useLocalStorage: false,
-       toolbar_bg: theme === 'white' ? '#fff' : '#141414',
-       overrides: theme === 'white' ? whiteTheme : blackTheme,
+       toolbar_bg: '#fff',
+       overrides: {
+         'scalesProperties.lineColor' : '#fff',
+         'symbolWatermarkProperties.transparency': 100, //
+         'paneProperties.background': '#fff', // kline panel
+         'paneProperties.gridProperties.color': '#ccc',
+         'mainSeriesProperties.style': 1,
+         //  Candles styles
+         'mainSeriesProperties.candleStyle.upColor': '#6ba583',
+         'mainSeriesProperties.candleStyle.downColor': '#d75442',
+         'mainSeriesProperties.candleStyle.drawWick': true,
+         'mainSeriesProperties.candleStyle.drawBorder': true,
+         'mainSeriesProperties.candleStyle.borderColor': '#378658',
+         'mainSeriesProperties.candleStyle.borderUpColor': '#225437',
+         'mainSeriesProperties.candleStyle.borderDownColor': '#5b1a13',
+         'mainSeriesProperties.candleStyle.wickColor': '#737375',
+         'mainSeriesProperties.candleStyle.barColorsOnPrevClose': false
+       },
        studies_overrides: {
-         "volume.show ma": false
-       }
+         'volume.show ma': false,
+         'bollinger bands.median.color': '#33FF88',
+         'bollinger bands.upper.linewidth': 7,
+       },
+       favorites:{
+          intervals: ['60', '120', '720', '1D', '1W', '1Y']
+        }
      });
   }
 
   componentDidMount() {
     if (chart == null) {
-      // this.generatorChart();
+      this.generatorChart();
     }
   }
 
@@ -87,10 +98,17 @@ export default class Chart extends React.Component<ChartProps, ChartState>{
   }
 
   public render(){
+    const { symbol, ticker } = this.props;
     return(
-      <div className="chart">
+      <div className='chart'>
         <Box
-          title={`BTC/CNZ ≈ ${60000} CNY 24H涨幅`}>
+          title={<div>
+            {symbol} ≈ {ticker.get("LastPrice")} {getBuyUnit(symbol)}
+            <span> 24H涨幅: </span>{ticker.get("Percent")}%
+            <span> 24H最高: </span>{ticker.get("High")}
+            <span> 24H最低: </span>{ticker.get("Low")}
+            <span> 24H成交: </span>{ticker.get("Volume24H")}
+          </div>}>
           <div id='chart_container'>
           </div>
         </Box>
@@ -98,3 +116,15 @@ export default class Chart extends React.Component<ChartProps, ChartState>{
     )
   }
 }
+
+function mapStateToProps(state: any) {
+  return {
+    lang: state.locales.get('lang'),
+    ticker: state.ticker,
+  };
+}
+
+
+export default connect(
+  mapStateToProps,
+)(Chart);

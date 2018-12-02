@@ -95,8 +95,7 @@ class App extends React.Component<IAppProps, IAppState> {
   }
 
   componentWillReceiveProps(nextProps: IAppProps) {
-    const { socket, account } = nextProps;
-    const { routeParams, actions } = this.props;
+    const { socket, account, routeParams, actions } = nextProps;
     const symbol = routeParams.symbol ? routeParams.symbol.toUpperCase() : 'ETH_CNZ';
     global.CurrentSymbol = symbol;
     if (socket.get('status') === 3) {
@@ -116,7 +115,9 @@ class App extends React.Component<IAppProps, IAppState> {
 
   public render() {
     const { visible } = this.state;
-    const { location, routeParams } = this.props;
+    const { location, routeParams, lang, account } = this.props;
+    const hasAccount = !!account.get('mobile');
+    const symbol = routeParams.symbol ? routeParams.symbol.toUpperCase() : 'ETH_CNZ';
     return (
       <div className="App">
         <Header
@@ -125,13 +126,13 @@ class App extends React.Component<IAppProps, IAppState> {
         />
         <div className="content">
           <div className="box-1">
-            <Assets/>
-            <Chart symbol={routeParams.symbol} lang="en" theme="white"/>
+            <Assets symbol={symbol}/>
+            <Chart symbol={symbol} lang={lang} theme="white"/>
             <TimeSales />
           </div>
           <div className="box-2">
             <Orderbook />
-            <Trade />
+            <Trade symbol={symbol} hasAccount={hasAccount}/>
             <History />
           </div>
           <div className="box-3">

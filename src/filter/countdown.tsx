@@ -1,6 +1,6 @@
 import { make } from 'react-lens';
 
-make('countdown', 'string', (content) => {
+make('countdown', 'string', (content: string) => {
   if ( content !== '0') {
     const now = new Date().getTime();
     const endtime = new Date(Number(content)).getTime();

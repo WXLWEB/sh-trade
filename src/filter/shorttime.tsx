@@ -2,7 +2,7 @@ import { make } from 'react-lens';
 import * as React from 'react';
 import Time from 'react-time';
 
-make('shorttime', 'string', (content) => {
+make('shorttime', 'string', (content: string) => {
   if (content === '-') {
     return '-';
   }

@@ -2,7 +2,7 @@ import { make } from 'react-lens';
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 
-make('ordertype', 'string', (content) => {
+make('ordertype', 'string', (content: string) => {
   const data;
   switch (content) {
     case 'X':

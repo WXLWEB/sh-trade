@@ -1,12 +1,10 @@
-import { ILogout } from '@/constants/ReducerType';
-import { ILogoutAction } from '@/constants/ActionType';
 import { removeToken } from '@/utils/token';
 
-const initialState: ILogout = {
-  sequence: 'next',
-};
+export type LogoutState = Readonly<any>
 
-export default function logout(state: ILogout = initialState, action: ILogoutAction): ILogout {
+export type LogoutAction = Readonly<any>
+
+export default function logout(state: LogoutState, action: LogoutAction){
   switch (action.type) {
     case 'logout requested':
       removeToken()

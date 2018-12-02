@@ -15,6 +15,15 @@ const getClientEnvironment = require('./env');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const loaders = require('./loaders');
+const AntDesignThemePlugin = require('antd-theme-webpack-plugin');
+const options = {
+  antDir: paths.antDir,
+  stylesDir: paths.stylesDir,
+  varFile: paths.varFile,
+  mainLessFile: paths.mainLessFile,
+  themeVariables: ['@primary-color', '@text-color'],
+  indexFileName: 'index.html'
+}
 
 // Webpack uses `publicPath` to determine where the app is being served from.
 // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -108,6 +117,7 @@ module.exports = {
       // Support React Native Web
       // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
       'react-native': 'react-native-web',
+      '@': paths.appSrc
     },
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -178,6 +188,7 @@ module.exports = {
     // It is absolutely essential that NODE_ENV was set to production here.
     // Otherwise React will be compiled in the very slow development mode.
     new webpack.DefinePlugin(env.stringified),
+    new AntDesignThemePlugin(options),
     // Minify the code.
     new UglifyJsPlugin({
       uglifyOptions: {
@@ -266,7 +277,7 @@ module.exports = {
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     // Perform type checking and linting in a separate process to speed up compilation
     new ForkTsCheckerWebpackPlugin({
-      async: true,
+      async: false,
       tsconfig: paths.appTsProdConfig,
       tslint: paths.appTsLint,
     }),

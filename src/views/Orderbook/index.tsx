@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as Immutable from 'immutable';
 import { Table } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import Box from '@/components/Box';
 import './index.less';
 interface IOrderbook {
   Price: number;
-  Quantity: number;
+  Size: number;
   TotalPrice: number;
   TotalQty: number;
   width?: number;
@@ -21,7 +20,7 @@ const columns: ColumnProps<IOrderbook>[] = [{
   width: 60,
 }, {
   title: '数量',
-  dataIndex: 'Quantity',
+  dataIndex: 'Size',
   align: 'center',
   width: 60,
 }, {
@@ -34,17 +33,39 @@ interface OrderbookProps {
   orderbook: any;
 }
 export type OrderbookState = Readonly<any>;
+const OrderBookItemLength = 20;
+const getEmptyArray:any = (size: number) => {
+  if(size >= OrderBookItemLength)
+  return [];
+  const data = [];
+  for (let i = 0; i < OrderBookItemLength - size; i++) {
+    data.push({
+      Price: '-',
+      Size: '-',
+      TotalPrice: '-',
+      TotalQty: '-',
+    });
+  }
+  return data
+}
+
 
 class Orderbook extends React.Component<OrderbookProps, OrderbookState>{
   constructor(props: OrderbookProps) {
     super(props);
   }
 
+  componentDidMount(){
+    console.log('scrollContent', this.refs.scrollContent.clientHeight);
+  }
+
   public render(){
-    const { orderbook } = this.props
-    const BidData = orderbook.get('BidData').toJS()
-    const AskData = orderbook.get('AskData').toJS().reverse()
-    console.log('BidData:', BidData)
+    const { orderbook } = this.props;
+    const askSize = orderbook.get('BidList').size;
+    const bidSize = orderbook.get('BidList').size;
+    const BidList = orderbook.get('BidList').toJS().concat(getEmptyArray(bidSize)).reverse();
+    const AskList = orderbook.get('AskList').toJS().concat(getEmptyArray(askSize));
+    console.log('getEmptyArray:', getEmptyArray(askSize));
     return(
       <div className="orderbook">
         <Box
@@ -55,29 +76,33 @@ class Orderbook extends React.Component<OrderbookProps, OrderbookState>{
               <div style={{width: 60, textAlign:'center'}}>数量</div>
               <div style={{width: 62, textAlign:'right'}}>累计</div>
             </div>
-            <div className="conent">
-              <Table
-                size='small'
-                className="orderbook-table ask"
-                columns={columns}
-                dataSource={AskData}
-                pagination={false}
-                bordered={false}
-                showHeader={false}
-                />
-              <div className="new-price">
-                <div>4,12341</div>
-                <div>¥ 3213</div>
-              </div>
-              <Table
-                size='small'
-                className="orderbook-table bid"
-                columns={columns}
-                dataSource={BidData}
-                pagination={false}
-                bordered={false}
-                showHeader={false}
-               />
+            <div id="orders">
+              <div className="content" ref="scrollContent">
+                <Table
+                  size='small'
+                  className="orderbook-table ask"
+                  columns={columns}
+                  dataSource={BidList}
+                  pagination={false}
+                  bordered={false}
+                  showHeader={false}
+                  rowKey={(_, index: number) => {return index.toString()}}
+                  />
+                <div className="new-price">
+                  <div>4,12341</div>
+                  <div>¥ 3213</div>
+                </div>
+                <Table
+                  size='small'
+                  className="orderbook-table bid"
+                  columns={columns}
+                  dataSource={AskList}
+                  pagination={false}
+                  bordered={false}
+                  showHeader={false}
+                  rowKey={(_, index: number) => {return index.toString()}}
+                 />
+               </div>
             </div>
           </div>
         </Box>

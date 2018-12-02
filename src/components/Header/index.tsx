@@ -5,7 +5,9 @@ import { FormattedMessage } from 'react-intl';
 import { Link } from 'react-router';
 import { Select, Menu, Icon, Popover } from 'antd';
 import classNames from 'classnames';
+import Filter from '@/Filter';
 import * as AuthActions from '@/store/actions/auth';
+import * as LocaleActions from '@/store/actions/locales';
 import { LeftNavigation, RightNavigation } from '@/constants/navigation';
 import './index.less'
 import logo from '@/assets/images/logo.png';
@@ -14,13 +16,8 @@ const Option = Select.Option;
 
 interface IHeaderProps {
     readonly location: any;
-    // readonly hasAccount: boolean;
-    // logout: any;
-    // account: string;
-    // product?: string;
+    readonly actions: any;
     readonly showLoginPopup: () => void;
-    // showRegisterPopup: any;
-    // isHome: boolean;
 }
 interface IHeaderState {
     menuVisible: boolean;
@@ -55,10 +52,9 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
         });
       }
 
-      handleLangChange = () => {
-        const { location: { pathname } } = this.props;
-        const currentProtocol = `${window.location.protocol}//`;
-        const currentHref = window.location.href.substr(currentProtocol.length);
+      handleLangChange = (value: string) => {
+        const { actions } = this.props;
+        actions.changeLang(value);
       }
 
       public render() {
@@ -91,8 +87,8 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
             className="header-lang-button"
             style={{ width: 100 }}
             onChange={this.handleLangChange}>
-            <Option value="zh-CN">简体中文</Option>
-            <Option value="en-EN">English</Option>
+            <Option value="zh">简体中文</Option>
+            <Option value="en">English</Option>
           </Select>,
           <Menu className="menu-site" mode={menuMode} selectedKeys={[activeMenuItem]} id="nav" key="nav">
             {
@@ -101,7 +97,7 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
                     return (
                       <Menu.Item key={item.id} id={item.id}>
                           <Link to={''}>
-                              {account.mobile}
+                              <Filter value={account.mobile} keyname="mobile"/>
                           </Link>
                       </Menu.Item>
                     );
@@ -191,7 +187,7 @@ function mapStateToProps(state: any) {
 
 function mapDispatchToProps(dispatch: any) {
   return {
-    actions: bindActionCreators(Object.assign({}, AuthActions), dispatch),
+    actions: bindActionCreators(Object.assign({}, AuthActions, LocaleActions), dispatch),
   };
 }
 

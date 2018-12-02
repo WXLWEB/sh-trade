@@ -1,14 +1,14 @@
-const getCoin = (Symbol) => {
+const getBuyUnit = (Symbol: string) => {
   const arr = Symbol.split('_')
   return arr[0];
 };
 
-const getCurrency = (Symbol) => {
+const getSellUnit = (Symbol: string) => {
   const arr = Symbol.split('_')
   return arr[1];
 };
 
 export {
-  getCoin,
-  getCurrency,
+  getBuyUnit,
+  getSellUnit,
 };
