@@ -18,7 +18,7 @@ $ yarn install
 
 ## Running
 ```
-$ yarn run serve
+$ yarn start
 ```
 
 ## Testing
