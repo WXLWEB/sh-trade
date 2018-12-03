@@ -267,7 +267,7 @@ module.exports = {
     }),
     //copy charting_library
     new CopyWebpackPlugin([
-      {context:'node_modules/charting_library/charting_library/', from:'**/*', to:'charting_library', toType:'dir'}
+      {context:'node_modules/sh-charting_library/charting_library/', from:'**/*', to:'charting_library', toType:'dir'}
     ]),
     // Moment.js is an extremely popular library that bundles large locale files
     // by default due to how Webpack interprets its code. This is a practical

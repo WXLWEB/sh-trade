@@ -156,7 +156,7 @@ module.exports = {
   plugins: [
     //copy charting_library
     new CopyWebpackPlugin([
-      {context:'node_modules/charting_library/charting_library/', from:'**/*', to:'public/charting_library/', toType:'dir'}
+      {context:'node_modules/sh-charting_library/charting_library/', from:'**/*', to:'public/charting_library/', toType:'dir'}
     ]),
     // Makes some environment variables available in index.html.
     // The public URL is available as %PUBLIC_URL% in index.html, e.g.:

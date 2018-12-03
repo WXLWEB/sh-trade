@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import 'charting_library/charting_library/charting_library.min.js';
-import 'charting_library/charting_library/datafeed/udf/datafeed.js';
+import 'sh-charting_library/charting_library/charting_library.min.js';
+import 'sh-charting_library/charting_library/datafeed/udf/datafeed.js';
 import Box from '@/components/Box';
 import env from '@/constants/env';
 import { getBuyUnit } from '@/utils/symbol';
