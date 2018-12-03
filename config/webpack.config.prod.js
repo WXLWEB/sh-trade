@@ -16,6 +16,8 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const loaders = require('./loaders');
 const AntDesignThemePlugin = require('antd-theme-webpack-plugin');
+const CompressionPlugin = require("compression-webpack-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const options = {
   antDir: paths.antDir,
   stylesDir: paths.stylesDir,
@@ -66,7 +68,7 @@ module.exports = {
   bail: true,
   // We generate sourcemaps in production. This is slow but gives good results.
   // You can exclude the *.map files from the build during deployment.
-  devtool: shouldUseSourceMap ? 'source-map' : false,
+  devtool: false,
   // In production, we only want to load the polyfills and the app code.
   entry: [require.resolve('./polyfills'), paths.appIndexJs],
   output: {
@@ -167,6 +169,10 @@ module.exports = {
     // in `package.json`, in which case it will be the pathname of that URL.
     new InterpolateHtmlPlugin(env.raw),
     // Generates an `index.html` file with the <script> injected.
+    //copy charting_library
+    new CopyWebpackPlugin([
+      {context:'node_modules/charting_library/charting_library/', from:'**/*', to:'charting_library', toType:'dir'}
+    ]),
     new HtmlWebpackPlugin({
       inject: true,
       template: paths.appHtml,
@@ -265,10 +271,6 @@ module.exports = {
       // Don't precache sourcemaps (they're large) and build asset manifest:
       staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/],
     }),
-    //copy charting_library
-    new CopyWebpackPlugin([
-      {context:'node_modules/charting_library/charting_library/', from:'**/*', to:'charting_library', toType:'dir'}
-    ]),
     // Moment.js is an extremely popular library that bundles large locale files
     // by default due to how Webpack interprets its code. This is a practical
     // solution that requires the user to opt into importing specific locales.
@@ -276,11 +278,19 @@ module.exports = {
     // You can remove this if you don't use Moment.js:
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     // Perform type checking and linting in a separate process to speed up compilation
-    new ForkTsCheckerWebpackPlugin({
-      async: false,
-      tsconfig: paths.appTsProdConfig,
-      tslint: paths.appTsLint,
+    // new ForkTsCheckerWebpackPlugin({
+    //   async: true,
+    //   tsconfig: paths.appTsProdConfig,
+    //   tslint: paths.appTsLint,
+    // }),
+    new CompressionPlugin({
+      filename: '[path].gz[query]',
+      algorithm: 'gzip',
+      test: /\.js$|\.css$|\.html$|\.eot?.+$|\.ttf?.+$|\.woff?.+$|\.svg?.+$/,
+      threshold: 10240,
+      minRatio: 0.8
     }),
+    new BundleAnalyzerPlugin(),
   ],
   // Some libraries import Node modules but don't use them in the browser.
   // Tell Webpack to provide empty mocks for them so importing them works.

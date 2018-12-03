@@ -7,7 +7,9 @@ import ConnectedIntlProvider from '@/components/ConnectedIntlProvider/index';
 import registerServiceWorker from '@/registerServiceWorker';
 import configureStore from '@/store/configureStore';
 import '@/index.less';
-
+if (module.hot) {
+  module.hot.accept();
+}
 const store = configureStore({});
 
 ReactDOM.render(
