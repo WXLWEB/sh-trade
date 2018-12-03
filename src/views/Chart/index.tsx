@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import 'charting_library/vendor/jquery.js';
 import 'charting_library/charting_library/charting_library.min.js';
 import 'charting_library/charting_library/datafeed/udf/datafeed.js';
 import Box from '@/components/Box';
