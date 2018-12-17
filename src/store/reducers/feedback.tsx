@@ -3,6 +3,7 @@ import { message } from 'antd';
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 import isUndefined from 'lodash.isundefined';
+import emitter from '@/utils/events';
 let execReportData = {};
 
 export interface FeedbackAction {
@@ -49,7 +50,7 @@ const dealExecReportResponse = (newData) => {
 
   //Filled
   if (newData.LeaveQty == 0 && newData.CumQty > old.CumQty) {
-     message.success(<FormattedMessage id='quantum_buy_sell_success'/>, 20);
+     emitter.emit('showSuccessMessage', "quantum_order_status_filled");
      execReportData[newData.OID] = newData;
     return;
   };
@@ -59,6 +60,7 @@ const dealExecReportResponse = (newData) => {
     // if ($('#audio-execution').length !== 0) {
     //   $('#audio-execution')[0].play();
     // }
+    emitter.emit('showSuccessMessage', "quantum_order_status_partially_filled");
     execReportData[newData.OID] = newData;
     return;
   };
@@ -69,16 +71,20 @@ const initialState = new (FeedbackState);
 const errorMessage = (code: number) => {
   switch (code) {
     case 109:
-      message.error("下单失败，未开放交易");
+      // message.error("下单失败，未开放交易");
+      emitter.emit('showErrorMessage', "quantum_feedback_max_position_reach");
       break;
     case 110:
-      message.error("资金不足");
+      // message.error("资金不足");
+      emitter.emit('showErrorMessage', "quantum_feedback_insufficient_balance");
       break;
     case 13:
-      message.error("数量错误");
+      // message.error("数量错误");
+      emitter.emit('showErrorMessage', "quantum_qty_input_error");
       break;
     default:
-      message.error("下单失败");
+      // message.error("下单失败");
+      emitter.emit('showErrorMessage', "quantum_buy_sell_failed");
       break;
   }
 }
@@ -87,7 +93,7 @@ export default function feedbackReducer(state: FeedbackState = initialState, act
   switch (action.type) {
     case 'place order response':
       if (action.payload.RC === '0') {
-        message.success('下单成功');
+        emitter.emit('showSuccessMessage', "quantum_buy_sell_success");
         return state;
       } else {
         errorMessage(action.payload.OrdRejReason)
@@ -96,7 +102,7 @@ export default function feedbackReducer(state: FeedbackState = initialState, act
       break;
     case 'cancel order response':
       if (action.payload.RC === '0') {
-        message.success("取消成功");
+        emitter.emit('showSuccessMessage', "quantum_feedback_canceled");
         return state;
       }else {
         errorMessage(action.payload.CxlRejReason)
@@ -105,7 +111,7 @@ export default function feedbackReducer(state: FeedbackState = initialState, act
       break;
     case 'cancel replace order response':
       if (action.payload.RC === '0') {
-        message.success("替换成功");
+        emitter.emit('showSuccessMessage', "quantum_feedback_replaced");
         return state;
       }else {
         errorMessage(action.payload.CxlRejReason)

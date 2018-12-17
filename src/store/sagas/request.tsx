@@ -43,6 +43,11 @@ function* getOrdersRequest(parameter: any) {
     yield put({ type: 'SENDMESSAGE', payload: wsRequest.createGetOrdersRequest(parameter.payload, (Date.now() - 1000 * 60 * 60 * 24 * 7).toString(), (Date.now() + 1000 * 60 * 60 * 24).toString(), '2,3,4,S' ) });
 }
 
+function* getAllOrdersRequest() {
+    yield put({ type: 'SENDMESSAGE', payload: wsRequest.createGetAllOrdersRequest('0', Date.now().toString(), 'A,0,1,2') });
+    yield put({ type: 'SENDMESSAGE', payload: wsRequest.createGetAllOrdersRequest((Date.now() - 1000 * 60 * 60 * 24 * 7).toString(), (Date.now() + 1000 * 60 * 60 * 24).toString(), '2,3,4,S' ) });
+}
+
 function* startSendPublicRequest(parameter: any) {
     yield put({ type: 'get quote request', payload: parameter.payload});
     yield put({ type: 'get trades request', payload: {symbol: parameter.payload, count: '15'}});
@@ -94,6 +99,7 @@ export default function* () {
     yield fork(takeLatest, 'subscribe request', subscribeRequest);
     yield fork(takeLatest, 'unsubscribe request', unsubscribeRequest);
     yield fork(takeLatest, 'get orders request', getOrdersRequest);
+    yield fork(takeLatest, 'get all orders request', getAllOrdersRequest);
     yield fork(takeLatest, 'query deal quote request', queryDealQuoteRequest);
     yield fork(takeLatest, 'execute deal quote request', executeDealQuoteRequest);
     yield fork(takeLatest, 'cancel order request', cancelOrderRequest);

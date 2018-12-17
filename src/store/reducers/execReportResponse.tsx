@@ -17,12 +17,12 @@ export interface ExecReportResponseAction {
 
 export class ExecReportResponseState extends Record({
     newPosition: false,
-    pendingOrders: List([{ 'Time': '-', 'Symbol': '-', 'CumQty': '-', 'Total': '-', 'Price': '-', 'Type': '-', 'Side': '-', 'OID': '-'}]),
+    pendingOrders: List([]),
     pendingSort: Map({key: 'Time', order: 'desc'}),
     OCOPendingOrders: List([]),
-    closedOrders: List([{ 'Time': '-', 'Symbol': '-', 'Type': '-', 'Side': '-', 'Quantity': '-', 'AvgPrice': '-', 'Status': '-'}]),
+    closedOrders: List([]),
     closedSort: Map({key: 'Time', order: 'desc'}),
-    positionDetails: List([{ 'Time': '-', 'Positions': '-', 'Price': '-', 'Profit': '-'}]),
+    positionDetails: List([]),
     positionSort: Map({key: 'Time', order: 'desc'}),
     oldExecReportData: List([]),
 }) {
@@ -115,23 +115,23 @@ const dealExecReport = (state, report) => {
   if (report.LeaveQty > 0) {
     if (report.OrderType === 'Z') {
       pendingObj = pendingObj.set(report.OID, dealPendingOrder(report));
-      newState = newState.update('OCOPendingOrders', v =>  pendingObj.toList());
+      state = state.update('OCOPendingOrders', v =>  pendingObj.toList());
     }else {
       pendingObj = pendingObj.set(report.OID, dealPendingOrder(report));
-      newState = newState.update('pendingOrders', v =>  List(orderBy(pendingObj.toList().toJSON(), [state.get('pendingSort').get('key')], [state.get('pendingSort').get('order')])));
+      state = state.update('pendingOrders', v =>  List(orderBy(pendingObj.toList().toJSON(), [state.get('pendingSort').get('key')], [state.get('pendingSort').get('order')])));
     }
   }
 
   if (report.LeaveQty <= 0) {
     if (report.OrderType === 'Z') {
       pendingObj = pendingObj.delete(report.OID);
-      newState = newState.update('OCOPendingOrders', v =>  pendingObj.toList());
+      state = state.update('OCOPendingOrders', v =>  pendingObj.toList());
     }else {
       pendingObj = pendingObj.delete(report.OID);
       if (pendingObj.size === 0 ) {
-        newState = newState.update('pendingOrders', v =>  List([{ 'Time': '-', 'Symbol': '-', 'CumQty': '-', 'Total': '-', 'Price': '-', 'Type': '-', 'Side': '-', 'OID': '-'}]));
+        state = state.update('pendingOrders', v =>  List([]));
       }else {
-        newState = newState.update('pendingOrders', v =>  List(orderBy(pendingObj.toList().toJSON(), [state.get('pendingSort').get('key')], [state.get('pendingSort').get('order')])));
+        state = state.update('pendingOrders', v =>  List(orderBy(pendingObj.toList().toJSON(), [state.get('pendingSort').get('key')], [state.get('pendingSort').get('order')])));
       }
     }
   }
@@ -141,9 +141,9 @@ const dealExecReport = (state, report) => {
     report.UserAveragePrice = getUserAveragePrice(report);
     closedObj  = closedObj.set(report.OID, dealExecutionsOrder(report));
     if (closedObj.size === 0) {
-      newState = newState.update('closedOrders', v => List([{ 'Time': '-', 'Symbol': '-', 'Type': '-', 'Side': '-', 'Quantity': '-', 'AvgPrice': '-', 'Status': '-'}]));
+      state = state.update('closedOrders', v => List([]));
     }else {
-      newState = newState.update('closedOrders', v => List(orderBy(closedObj.toList().toJSON(), [state.get('closedSort').get('key')], [state.get('closedSort').get('order')])));
+      state = state.update('closedOrders', v => List(orderBy(closedObj.toList().toJSON(), [state.get('closedSort').get('key')], [state.get('closedSort').get('order')])));
     }
   }
 
@@ -155,19 +155,19 @@ const dealExecReport = (state, report) => {
         o.OpenPosition = (report.Side === '1') ? o.OpenedQuantity : -o.OpenedQuantity;
         o.totalProfit = calculateProfit(Ticker, o.Price, o.Side, o.OpenedQuantity);
         positionObj  = positionObj.set(report.OID, dealPositionsOrder(o));
-        newState = newState.update('positionDetails', v => positionObj.toList());
+        state = state.update('positionDetails', v => positionObj.toList());
       }else {
         positionObj = positionObj.delete(report.OID);
         if (positionObj.size === 0) {
-          newState = newState.update('positionDetails', v => List([{ 'Time': '-', 'Positions': '-', 'Price': '-', 'Profit': '-'}]));
+          state = state.update('positionDetails', v => List([]));
         }else {
-          newState = newState.update('positionDetails', v => List(orderBy(positionObj.toList().toJSON(), [state.get('positionSort').get('key')], [state.get('positionSort').get('order')])));
+          state = state.update('positionDetails', v => List(orderBy(positionObj.toList().toJSON(), [state.get('positionSort').get('key')], [state.get('positionSort').get('order')])));
         }
       }
     });
   }
 
-  return newState;
+  return state;
 };
 
 const updatePositionsProfit = (state, Ticker) => {
@@ -182,26 +182,24 @@ const updatePositionsProfit = (state, Ticker) => {
 export default function execReportResponseReducer(state: ExecReportResponseState = initialState, action: ExecReportResponseAction) {
   switch (action.type) {
     case 'exec report order response array':
+
       action.payload.forEach(report => {
-          newState = dealExecReport(state, report);
+          state = dealExecReport(state, report);
       });
-      if (isUndefined(newState)) {
-        return state;
-      }
-      return newState;
+      return state;
     case 'exec report order response':
-        newState = dealExecReport(state, action.payload);
-      return newState;
+        state = dealExecReport(state, action.payload);
+      return state;
     case 'get symbol ticker':
       if ((Ticker.AskPrice !== action.payload.AskPrice || Ticker.BidPrice !== action.payload.BidPrice)) {
         Ticker.AskPrice = action.payload.AskPrice;
         Ticker.BidPrice = action.payload.BidPrice;
-        const time = state.get('positionDetails').get(0).Time;
-        if (time !== '-') {
+        // const time = state.get('positionDetails').get(0).Time;
+        // if (time !== '-') {
           return state.update('positionDetails', v => updatePositionsProfit(state, Ticker));
-        }else {
-          return state;
-        }
+        // }else {
+        //   return state;
+        // }
       }else {
          return state;
       }
@@ -215,19 +213,27 @@ export default function execReportResponseReducer(state: ExecReportResponseState
     case 'order position orders':
       return state.update('positionDetails', v => List(orderBy(state.get('positionDetails').toJSON(), [action.payload.key], [action.payload.order])))
                   .update('positionSort', v => Map({key: action.payload.key, order: action.payload.order}));
+    // case 'clear orders':
+    //   return Map({
+    //     newPosition: false,
+    //     pendingOrders: List([]),
+    //     pendingSort: Map({key: 'Time', order: 'desc'}),
+    //     OCOPendingOrders: List([]),
+    //     closedOrders: List([]),
+    //     closedSort: Map({key: 'Time', order: 'desc'}),
+    //     positionDetails: List([]),
+    //     positionSort: Map({key: 'Time', order: 'desc'}),
+    //     oldExecReportData: List([]),
+    //   });
     case 'clear account info':
-      newState = initialState;
-      pendingObj = Map();
-      closedObj = Map();
-      positionObj = Map();
       return Map({
         newPosition: false,
-        pendingOrders: List([{ 'Time': '-', 'Symbol': '-', 'CumQty': '-',  'Total': '-', 'Price': '-', 'Type': '-', 'Side': '-', 'OID': '-'}]),
+        pendingOrders: List([]),
         pendingSort: Map({key: 'Time', order: 'desc'}),
         OCOPendingOrders: List([]),
-        closedOrders: List([{ 'Time': '-',  'Symbol': '-', 'Type': '-', 'Side': '-', 'Quantity': '-', 'AvgPrice': '-', 'Status': '-'}]),
+        closedOrders: List([]),
         closedSort: Map({key: 'Time', order: 'desc'}),
-        positionDetails: List([{ 'Time': '-', 'Positions': '-', 'Price': '-', 'Profit': '-'}]),
+        positionDetails: List([]),
         positionSort: Map({key: 'Time', order: 'desc'}),
         oldExecReportData: List([]),
       });

@@ -1,6 +1,6 @@
 export default {
   AccountID: '',
   AccountKey: '',
-  CurrentSymbol: '',
+  CurrentSymbol: 'ETH_CNZ',
   Locale: 'zh'
 };

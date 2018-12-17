@@ -15,6 +15,7 @@ import './feeCNY.tsx';
 import './shorttime.tsx';
 import './email.tsx';
 import './mobile.tsx';
+import './decimal.tsx';
 
 export interface FilterProps{
   value: any;
@@ -27,7 +28,7 @@ class Filter extends React.Component<FilterProps, any> {
   render() {
     const { value , keyname, decimal } = this.props;
     return(
-      <Lens filter={keyname}>{!!value ? value.toString() : '-' }</Lens>
+      <Lens filter={keyname ==='decimal' ? `${keyname}: ${decimal}` : keyname}>{!!value ? value.toString() : '0' }</Lens>
     );
   };
 }

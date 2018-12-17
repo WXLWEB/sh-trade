@@ -11,6 +11,9 @@ const fetchBase = (endPoint = '/hello', method = 'GET', params = {}) => {
       'Json-Web-Token': getToken()
     },
   };
+  if (endPoint === '/api/vcode/sms'){
+    delete options.headers['Json-Web-Token']
+  }
   if (method === 'GET') {
     const queryString = `?${Object.keys(params).map(k => [k, params[k]].map(encodeURIComponent).join('=')).join('&')}`;
     url += queryString;
@@ -18,9 +21,9 @@ const fetchBase = (endPoint = '/hello', method = 'GET', params = {}) => {
     (options as any).body = JSON.stringify(params);
   }
   return fetch(url, options).then((res: any) => {
-    // if (!res.ok) {
-    //   return res.json().then((e: any) => Promise.reject({ message: e }));
-    // }
+    if (res.status !== 200) {
+      return res.json().then((e: any) => Promise.reject(e));
+    }
     return res.json();
   });
 };

@@ -2,11 +2,13 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Modal } from 'antd';
+import { Link } from 'react-router';
 import Header from '@/components/Header';
 import * as SocketActions from '@/store/actions/socket';
 import * as AuthActions from '@/store/actions/auth';
 import * as RequestActions from '@/store/actions/request';
-import global from  '@/constants/config'
+import * as ActiveContractsActions from '@/store/actions/activeContract';
+import AllSymbols from '@/constants/allSymbols';
 import Assets from './Assets';
 import Chart from './Chart';
 import TimeSales from './TimeSales';
@@ -22,6 +24,7 @@ export interface IAppProps {
   readonly location: string;
   readonly auth: any;
   readonly account: any;
+  readonly activeContracts: any;
   readonly routeParams: any;
   readonly socket: any;
   readonly actions: any;
@@ -69,7 +72,11 @@ class App extends React.Component<IAppProps, IAppState> {
   }
 
   componentDidMount(){
-    const { actions } = this.props;
+    const { actions, routeParams, activeContracts } = this.props;
+    if(routeParams.symbol){
+       const symbol = AllSymbols.indexOf(routeParams.symbol.toUpperCase()) >= 0 ? routeParams.symbol.toUpperCase() : 'ETH_CNZ'
+       actions.setCurrentSymbol(symbol)
+    }
     const that = this;
     window.addEventListener('load', function(e: Event) {
       e.preventDefault();
@@ -95,29 +102,30 @@ class App extends React.Component<IAppProps, IAppState> {
   }
 
   componentWillReceiveProps(nextProps: IAppProps) {
-    const { socket, account, routeParams, actions } = nextProps;
-    const symbol = routeParams.symbol ? routeParams.symbol.toUpperCase() : 'ETH_CNZ';
-    global.CurrentSymbol = symbol;
+    const { socket, account, activeContracts, actions } = nextProps;
     if (socket.get('status') === 3) {
       requestSend = true;
       requestSendAccount = true;
     }
     if (socket.get('status') === 1 && requestSend) {
-      actions.startSendPublicRequest(symbol);
+      actions.startSendPublicRequest(activeContracts.currentSymbol);
       requestSend = false;
       // requestSendAccount = true;
     }
     if (!!account.get('accountID') && socket.get('status') === 1 && requestSendAccount) {
-      actions.startSendPrivateRequest(symbol);
+      actions.startSendPrivateRequest(activeContracts.currentSymbol);
       requestSendAccount = false;
     }
   }
 
   public render() {
     const { visible } = this.state;
-    const { location, routeParams, lang, account } = this.props;
+    const { location, lang, account, activeContracts } = this.props;
     const hasAccount = !!account.get('mobile');
-    const symbol = routeParams.symbol ? routeParams.symbol.toUpperCase() : 'ETH_CNZ';
+    // let symbol = 'ETH_CNZ'
+    // if(routeParams.symbol){
+    //    symbol = findIndex(activeContracts.AllContracts, function(o: any){ return o.Symbol = routeParams.symbol}) >= 0 ? routeParams.symbol.toUpperCase() : 'ETH_CNZ'
+    // }
     return (
       <div className="App">
         <Header
@@ -126,22 +134,22 @@ class App extends React.Component<IAppProps, IAppState> {
         />
         <div className="content">
           <div className="box-1">
-            <Assets symbol={symbol}/>
-            <Chart symbol={symbol} lang={lang} theme="white"/>
+            <Assets symbol={activeContracts.currentSymbol} hasAccount={hasAccount} openLoginPopup={this.showLoginPopup}/>
+            <Chart symbol={activeContracts.currentSymbol} lang={lang} theme="white"/>
             <TimeSales />
           </div>
           <div className="box-2">
             <Orderbook />
-            <Trade symbol={symbol} hasAccount={hasAccount}/>
-            <History />
+            <Trade symbol={activeContracts.currentSymbol} hasAccount={hasAccount} openLoginPopup={this.showLoginPopup}/>
+            <History symbol={activeContracts.currentSymbol} hasAccount={hasAccount}/>
           </div>
           <div className="box-3">
             <Introduce />
           </div>
         </div>
-        <Modal title="登录"
+        <Modal title="用户登录"
            visible={visible}
-           footer={null}
+           footer={<div>还没有账户？<Link to="register">立即注册</Link></div>}
            width={400}
            onOk={this.handleOk}
            onCancel={this.handleCancel}
@@ -161,14 +169,14 @@ function mapStateToProps(state: any) {
     socket: state.socket,
     lang: state.locales.get('lang'),
     account: state.account,
-    // auth: state.auth,
+    activeContracts: state.activeContracts,
   };
 }
 
 
 function mapDispatchToProps(dispatch: any) {
   return {
-    actions: bindActionCreators(Object.assign({}, SocketActions, AuthActions, RequestActions), dispatch),
+    actions: bindActionCreators(Object.assign({}, SocketActions, AuthActions, RequestActions, ActiveContractsActions), dispatch),
   };
 }
 

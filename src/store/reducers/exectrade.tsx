@@ -39,4 +39,13 @@ export default handleActions({
     'get exectrade' (state: ExectradeState = initialState, action: TradeAction) {
       return state.update('Trades', v => v.splice(0, 0, action.payload).pop());
     },
+    'disconnected' (state: ExectradeState = initialState) {
+      return state.set('Trades', List([{
+        Timestamp: '-',
+        Price:  '-',
+        Size: '-',
+        Side:   '-',
+        Symbol: '-',
+      }]))
+    }
 }, initialState);

@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 const TokenKey = 'ZG-Token'
 
 const getToken = () => {
-  Cookies.get(TokenKey)
+  return Cookies.get(TokenKey)
 }
 
 const setToken = (token: string) => {

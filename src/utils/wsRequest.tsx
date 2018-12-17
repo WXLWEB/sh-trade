@@ -54,6 +54,15 @@ const createGetOrdersRequest = (symbol: string, begin: string, end: string, stat
   return JSON.stringify(request);
 };
 
+const createGetAllOrdersRequest = (begin: string, end: string, status: string) => {
+  let request:any = createSignedRequest('GetOrdersRequest');
+  request.Status = status;
+  request.Begin = begin;
+  request.End = end;
+  signedRequest(request, [begin, end, status]);
+  return JSON.stringify(request);
+};
+
 const createLoginRequest = () => {
   let request:any = createSignedRequest('LoginRequest');
   signedRequest(request, []);
@@ -163,6 +172,7 @@ export default {
   createGetTradesRequest,
   createQuoteRequest,
   createGetOrdersRequest,
+  createGetAllOrdersRequest,
   createLoginRequest,
   createLogoutRequest,
   createGetAccountInfoRequest,

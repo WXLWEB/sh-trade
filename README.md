@@ -1,8 +1,5 @@
 # Trade frontend
 
-## Test url:
-http://121.43.174.34/eth_btc
-
 ## Contains
 - React
 - Redux

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Form, Input, Button, Icon, Checkbox, Row, Col, Select, message } from 'antd';
+import { Form, Input, Button, Icon, Row, Col, Select, message } from 'antd';
 import * as api from '@/utils/api';
 import './index.less';
 
@@ -44,12 +44,13 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState>{
 
   protected getCaptcha = () => {
     const mobile = this.props.form.getFieldValue('mobile')
+    const mobile_prefix = this.props.form.getFieldValue('mobile_prefix')
     if(!mobile){
       return
     } else {
-      api.getSmsVcode({mobile: mobile, type: '1'}).then((res: any) => {
+      api.getSmsVcode({mobile_prefix: mobile_prefix, mobile: mobile, type: '1'}).then((res: any) => {
         if(!res.succeed) {
-          message.error(res.show_message);
+          message.error(res.error_message);
         }else{
           this.countDown();
         }
@@ -68,13 +69,13 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState>{
       console.log('values:', values);
       if (!err) {
         console.log('Received values of form: ', values);
-        api.login(values).then((res: any) => {
+        api.login({mobile_prefix: '+86', ...values}).then((res: any) => {
           console.log('res:', res)
           if(res.succeed){
             that.props.onCancel()
-            dispatch({type: 'get account info success', payload: res.data})
+            dispatch({type: 'login request success', payload: res.data})
           }else {
-            message.error(res.show_message);
+            message.error(res.error_message);
           }
         })
       }
@@ -89,31 +90,37 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState>{
     const { getFieldDecorator } = this.props.form;
     const { leftTime } = this.state;
     const prefixSelector = getFieldDecorator('mobile_prefix', {
-      initialValue: '86',
+      initialValue: '+86',
     })(
       <Select style={{ width: 70 }}>
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
+        <Option value="+86">+86</Option>
+        <Option value="+87">+87</Option>
       </Select>
     );
 
     return(
-      <Form onSubmit={this.handleSubmit} className="login-form">
-          <FormItem>
+      <Form onSubmit={this.handleSubmit} className="login-form" layout="vertical" hideRequiredMark>
+          <FormItem
+            label="手机号"
+            >
             {getFieldDecorator('mobile', {
               rules: [{ required: true, message: 'Please input your phone number!' }],
             })(
               <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
             )}
           </FormItem>
-          <FormItem>
+          <FormItem
+            label="密码"
+            >
             {getFieldDecorator('password', {
               rules: [{ required: true, message: 'Please input your Password!' }],
             })(
               <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
             )}
           </FormItem>
-          <FormItem>
+          <FormItem
+            label="手机验证码"
+            >
             <Row gutter={8}>
               <Col span={16}>
                 {getFieldDecorator('sms_code', {
@@ -130,17 +137,16 @@ class LoginForm extends React.Component<LoginFormProps, LoginFormState>{
             </Row>
           </FormItem>
           <FormItem>
-            {getFieldDecorator('remember', {
-              valuePropName: 'checked',
-              initialValue: true,
-            })(
-              <Checkbox>Remember me</Checkbox>
-            )}
-            <a className="login-form-forgot" href="">Forgot password</a>
-            <Button type="primary" htmlType="submit" className="login-form-button">
-              Log in
-            </Button>
-            Or <a href="">register now!</a>
+            <Row style={{marginTop:'10px'}}>
+              <Col span={18}>
+                <Button type="primary" htmlType="submit" className="login-form-button">
+                  立即登录
+                </Button>
+              </Col>
+              <Col span={6} style={{textAlign:'center'}}>
+                <a className="login-form-forgot" href="">忘记密码</a>
+              </Col>
+            </Row>
           </FormItem>
         </Form>
     )

@@ -7,9 +7,9 @@ import Currency from '@/constants/currency';
 const balanceArr = Currency.map(item => {
   return {
     currency: item,
-    available: '-',
-    frozen: '-',
-    total: '-',
+    available: 0,
+    frozen: 0,
+    total: 0,
   };
 });
 

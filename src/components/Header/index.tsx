@@ -78,14 +78,15 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
         const menu = [
           <Select
             value={lang}
+            key={0}
             suffixIcon={<Icon type="caret-down" />}
             className="header-lang-button"
             style={{ width: 100 }}
             onChange={this.handleLangChange}>
-            <Option value="zh">简体中文</Option>
-            <Option value="en">English</Option>
+            <Option value="zh" key="zh">简体中文</Option>
+            <Option value="en" key="en">English</Option>
           </Select>,
-          <Menu className="menu-site" mode={menuMode} selectedKeys={[activeMenuItem]} id="nav" key="nav">
+          <Menu key={1} className="menu-site" mode={menuMode} selectedKeys={[activeMenuItem]} id="nav" key="nav">
             {
               RightNavigation.map((item: any) => {
                 if (hasAccount && (item.id === 'signin')) {

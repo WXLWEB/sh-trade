@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Row, Col, Card, Table } from 'antd'
+import { Link } from  'react-router';
 import Box from '@/components/Box';
 import './index.less';
 
@@ -39,18 +40,18 @@ const data = [{
 }, {
   key: '5',
   name: '白皮书',
-  detail: 'https://github.com/EOSl0/Documentation/blob/master/zh-CN/TechnicalWhitePap',
+  detail: <a target="_blank" href="https://github.com/EOSl0/Documentation/blob/master/zh-CN/TechnicalWhitePap">https://github.com/EOSl0/Documentation/blob/master/zh-CN/TechnicalWhitePap</a>,
 }, {
   key: '6',
   name: '官网',
-  detail: '5亿',
+  detail: <a target="_blank" href="https://eos.io/">Https://eos.io/</a>,
 }, {
   key: '7',
   name: '区块链查询',
-  detail: '5亿',
+  detail: <a target="_blank" href="https://etherscan.io/token/EOS">https://etherscan.io/token/EOS</a>,
 }];
 
-export default class Introduce extends React.Component<IntroduceProps, IntroduceState>{
+export default class Introduce extends React.PureComponent<IntroduceProps, IntroduceState>{
   public render(){
     return(
       <div className="introduce">
@@ -73,7 +74,7 @@ export default class Introduce extends React.Component<IntroduceProps, Introduce
                </Card>
             </Col>
             <Col span={12}>
-              <Table columns={columns} dataSource={data} pagination={false} showHeader={false} size="middle" />
+              <Table columns={columns} dataSource={data} pagination={false} showHeader={false} size="middle" rowKey="name"/>
             </Col>
           </Row>
         </Box>

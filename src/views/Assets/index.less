@@ -1,4 +1,7 @@
 .assets{
+  .ant-tabs-nav .ant-tabs-tab .anticon{
+    margin-right: 0!important;
+  }
   .coin-table{
     margin: 0 24px;
     font-size: 12px;
@@ -21,6 +24,12 @@
           color: #3562FF;
         }
       }
+    }
+    .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-header{
+      margin-bottom: 0!important;
+      padding-bottom: 0!important;
+      overflow: hidden;
+      height: 28px;
     }
     .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-header > table > .ant-table-thead > tr > th{
       border-bottom: none;
@@ -51,7 +60,8 @@
       line-height: 32px;
       margin-right: 4px!important;
       &:last-of-type{
-        float: right;
+        position: absolute;
+        right: 0;
         margin-right: 0!important;
       }
     }

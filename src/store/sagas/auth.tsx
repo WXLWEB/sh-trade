@@ -1,12 +1,15 @@
 import { takeLatest } from 'redux-saga';
 import { call, put, fork } from 'redux-saga/effects';
 import * as api from '@/utils/api';
+import emitter from '@/utils/events';
 
 function* login(action: any) {
     try {
         const res = yield call(api.login, action.payload);
-        if (res) {
+        if (res.succeed) {
           yield put({ type: 'login request success', payload: res});
+        }else {
+          yield put({ type: 'login request failed', payload: res});
         }
     } catch (e) {
          yield put({ type: 'login request failed', payload: e});
@@ -16,8 +19,10 @@ function* login(action: any) {
 function* getAccountInfo(action: any) {
     try {
         const res = yield call(api.getAccountInfo, action.payload);
-        if (res) {
+        if (res.succeed) {
           yield put({ type: 'get account info success', payload: res});
+        }else {
+          yield put({ type: 'get account info failed', payload: res});
         }
     } catch (e) {
          yield put({ type: 'get account info failed', payload: e});
@@ -27,8 +32,10 @@ function* getAccountInfo(action: any) {
 function* register(action: any) {
     try {
         const res = yield call(api.register, action.payload);
-        if (res) {
+        if (res.succeed) {
           yield put({ type: 'register request success', payload: res});
+        }else {
+          yield put({ type: 'register request failed', payload: res});  
         }
     } catch (e) {
          yield put({ type: 'register request failed', payload: e});
@@ -38,7 +45,7 @@ function* register(action: any) {
 function* getSmsVcode(action: any) {
     try {
         const res = yield call(api.getSmsVcode, action.payload);
-        if (res) {
+        if (res.succeed) {
           yield put({ type: 'get sms vcode success', payload: res});
         }
     } catch (e) {

@@ -5,6 +5,7 @@ import 'charting_library/charting_library/datafeed/udf/datafeed.js';
 import Box from '@/components/Box';
 import env from '@/constants/env';
 import { getBuyUnit } from '@/utils/symbol';
+import Filter from '@/Filter';
 import './index.less';
 
 let chart:any = null;
@@ -13,6 +14,7 @@ interface ChartProps {
   readonly lang: string;
   readonly theme: string;
   readonly symbol: string;
+  readonly activeContracts: any;
 }
 export type ChartState = Readonly<any>;
 
@@ -97,16 +99,16 @@ class Chart extends React.Component<ChartProps, ChartState>{
   }
 
   public render(){
-    const { symbol, ticker } = this.props;
+    const { symbol, ticker, activeContracts } = this.props;
     return(
       <div className='chart'>
         <Box
           title={<div>
             {symbol} ≈ {ticker.get("LastPrice")} {getBuyUnit(symbol)}
-            <span> 24H涨幅: </span>{ticker.get("Percent")}%
-            <span> 24H最高: </span>{ticker.get("High")}
-            <span> 24H最低: </span>{ticker.get("Low")}
-            <span> 24H成交: </span>{ticker.get("Volume24H")}
+            <span className="key"> 24H涨幅: </span><span className={ticker.get("Percent") > 0 ? 'green' : 'red'}><Filter value={ticker.get("Percent")} keyname='decimal: 2'/>%</span>
+            <span className="key"> 24H最高: </span><Filter value={ticker.get("High")} keyname={`decimal: ${activeContracts.currentPriceDecimal}`}/>
+            <span className="key"> 24H最低: </span><Filter value={ticker.get("Low")} keyname={`decimal: ${activeContracts.currentPriceDecimal}`}/>
+            <span className="key"> 24H成交: </span><Filter value={ticker.get("Volume24H")} keyname={`decimal: ${activeContracts.currentPriceDecimal}`}/>
           </div>}>
           <div id='chart_container'>
           </div>
@@ -120,6 +122,7 @@ function mapStateToProps(state: any) {
   return {
     lang: state.locales.get('lang'),
     ticker: state.ticker,
+    activeContracts: state.activeContracts,
   };
 }
 

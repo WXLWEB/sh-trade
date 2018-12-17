@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Table } from 'antd';
-import { ColumnProps } from 'antd/lib/table';
 import Box from '@/components/Box';
 import Filter from '@/Filter'
 import './index.less';
@@ -15,36 +14,45 @@ interface ITimeSales {
   render: () => void;
 }
 
-const columns: ColumnProps<ITimeSales>[] = [{
-  title: '时间',
-  dataIndex: 'Timestamp',
-  align: 'left',
-  width: 60,
-  render: (item) => (
-    <Filter keyname="timestamp" value={item} />
-  )
-}, {
-  title: '价格',
-  dataIndex: 'Price',
-  align: 'center',
-  width: 80,
-  render: (item, row) => (
-    <div className={row.Side === '1' ? 'green' : 'red'}>
-      {item}
-    </div>
-  )
-}, {
-  title: '数量',
-  dataIndex: 'Size',
-  align: 'right',
-}];
-
 interface TimeSalesProps {
   exectrade: any;
+  activeContracts: any;
 }
 export type TimeSalesState = Readonly<any>;
 
 class TimeSales extends React.Component<TimeSalesProps, TimeSalesState>{
+  constructor(props: TimeSalesProps){
+    super(props);
+    this.state = {
+      columns: [{
+        title: '时间',
+        dataIndex: 'Timestamp',
+        align: 'left',
+        width: '30%',
+        render: (item) => (
+          <Filter keyname="timestamp" value={item} />
+        )
+      }, {
+        title: '价格',
+        dataIndex: 'Price',
+        align: 'center',
+        width: '30%',
+        render: (item, row) => (
+          <div className={row.Side === '1' ? 'green' : 'red'}>
+            <Filter value={item} keyname={`decimal: ${this.props.activeContracts.currentPriceDecimal}`}/>
+          </div>
+        )
+      }, {
+        title: '数量',
+        dataIndex: 'Size',
+        align: 'right',
+        width: '40%',
+        render: (item: number) => (
+          <Filter value={item} keyname={`decimal: ${this.props.activeContracts.currentQuantityDecimal}`}/>
+        )
+      }]
+    }
+  }
   public render(){
     const { exectrade } = this.props;
     const data = exectrade.get('Trades').toJS();
@@ -55,7 +63,7 @@ class TimeSales extends React.Component<TimeSalesProps, TimeSalesState>{
           <Table
             size='small'
             className="timesales-table"
-            columns={columns}
+            columns={this.state.columns}
             dataSource={data}
             pagination={false}
             bordered={false}
@@ -70,6 +78,7 @@ class TimeSales extends React.Component<TimeSalesProps, TimeSalesState>{
 function mapStateToProps(state: any) {
   return {
     exectrade: state.exectrade,
+    activeContracts: state.activeContracts,
   };
 }
 

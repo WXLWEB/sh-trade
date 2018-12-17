@@ -1,7 +1,35 @@
+.ant-table-body{
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.ant-modal-header{
+  border-bottom: none!important;
+  padding: 32px;
+  .ant-modal-title{
+    font-size: 24px;
+  }
+}
+.ant-modal-body{
+  padding: 0 32px 14px;
+}
+.ant-modal-footer{
+  margin: 0 32px;
+  padding: 24px 0 32px;
+  text-align: left;
+}
+.ant-modal-close-x{
+  font-size: 24px;
+  width: 86px;
+  height: 86px;
+  line-height: 86px;
+}
 .App {
   text-align: center;
   background-color: #EFF2F5;
-  min-width: 1208px;
+  min-width: 1256px;
+  overflow: hidden;
   &>.content{
     padding: 12px;
   }
@@ -11,7 +39,8 @@
     width: 100%;
     &>div{
       height: 100%;
-      padding: 12px;
+      padding: 12px 0;
+      margin: 0 12px;
     }
   }
   .box-1{
@@ -50,7 +79,6 @@
   }
   .box-3{
     height: 475px;
-    min-width: 1208px;
     &>div{
       height: 100%;
       padding:12px;

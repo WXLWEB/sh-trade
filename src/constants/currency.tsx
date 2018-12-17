@@ -1,5 +1,5 @@
 const Currency = [
-  'CNZ', 'ETH', 'EOS', 'BTC', 'BCH'
+  'CNZ', 'ETH', 'EOS', 'BTC', 'BCH', 'OMG'
 ];
 
 export default Currency;
